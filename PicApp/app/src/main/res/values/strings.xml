@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PicApp</string>
+    <string name="title_activity_photo_list">Photos</string>
+    <string name="action_settings">Settings</string>
 </resources>
