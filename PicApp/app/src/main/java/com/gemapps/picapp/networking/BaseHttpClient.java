@@ -2,7 +2,6 @@ package com.gemapps.picapp.networking;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import java.io.IOException;
 
