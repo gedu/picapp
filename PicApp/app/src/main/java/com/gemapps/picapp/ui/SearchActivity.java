@@ -3,6 +3,9 @@ package com.gemapps.picapp.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import com.gemapps.picapp.R;
 
@@ -19,6 +22,20 @@ public class SearchActivity extends BaseCardActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if(actionId == EditorInfo.IME_ACTION_DONE ||
+                        event.getAction() == KeyEvent.ACTION_DOWN){
+                    onPositiveClicked();
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
         setResult(RESULT_CANCELED);
     }
