@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,7 +73,7 @@ public class PhotoListActivity extends BaseActivity {
             @Override
             public void onRefresh() {
 
-                loadContent();
+                loadContent(mQuery);
             }
         });
 
@@ -86,7 +85,7 @@ public class PhotoListActivity extends BaseActivity {
 
         mQuery = savedInstanceState.getString(SAVED_QUERY_PREF);
         loadContent(mQuery);
-        showQueryPill();
+        if(mQuery.length() > 0) showQueryPill();
     }
 
     private void loadContent(){
@@ -106,7 +105,7 @@ public class PhotoListActivity extends BaseActivity {
 
             @Override
             public void onSuccess(String response) {
-                
+
                 try {
                     JSONObject photoObj = new JSONObject(response);
                     JSONObject photoContent = new JSONObject(photoObj.getString(PHOTOS_KEY));
@@ -196,6 +195,7 @@ public class PhotoListActivity extends BaseActivity {
             @Override
             public void onClear() {
                 mInflatedQuery.setVisibility(View.GONE);
+                mQuery = "";
                 loadContent();
             }
         });

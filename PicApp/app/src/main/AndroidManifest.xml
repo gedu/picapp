@@ -26,10 +26,10 @@
         </activity>
         <activity
             android:name=".ui.SearchActivity"
-            android:theme="@style/AppTheme.Dialog">
+            android:theme="@style/AppTheme.Translucent.Dialog">
         </activity>
         <activity android:name=".ui.PhotoItemActivity"
-                  android:theme="@style/AppTheme.Dialog">
+                  android:theme="@style/AppTheme.Translucent.Dialog">
         </activity>
     </application>
 

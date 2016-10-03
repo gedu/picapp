@@ -14,17 +14,19 @@ public class FlickrClient extends BaseHttpClient {
     public static final String PHOTO_KEY = "photo";
 
     private static final String QUERY_PARAM = "text=%s&";
+    private static final String GET_RECENT_METHOD = "getRecent";
+    private static final String SEARCH_METHOD = "search";
 
     /**
      * 1 api_key
      * 2 per_page
      * 3 query
+     * 4 method
      */
-    private static final String FLICKR_SEARCH_URL = "https://api.flickr.com/services/rest/" +
-            "?method=flickr.photos.getRecent" +
-            "&api_key=%s&per_page=%s&sort=relevance&parse_tags=1&" +
+    private static final String FLICKR_SEARCH_URL = "https://api.flickr.com/services/rest?" +
+            "sort=relevance&parse_tags=1&content_type=7&api_key=%s&per_page=%s&" +
             "extras=count_comments,count_faves,owner_name,url_n,url_c,url_b" +
-            "&page=1&%sformat=json&nojsoncallback=1";
+            "&page=1&%sformat=json&nojsoncallback=1&method=flickr.photos.%s";
 
     /**
      * farmId, serverId, id, secret and size
@@ -41,9 +43,10 @@ public class FlickrClient extends BaseHttpClient {
 
     public void getPhotoList(String query, CallbackResponse responseListener){
 
-        String queryParam = query.length() > 0 ? String.format(QUERY_PARAM, query) : "";
+        String queryParam = query.length() > 0 ? String.format(QUERY_PARAM, query).replace(" ", "%20") : "";
+        String method = query.length() > 0 ? SEARCH_METHOD : GET_RECENT_METHOD;
 
-        doGet(String.format(FLICKR_SEARCH_URL, BuildConfig.FLICKR_API_KEY, PHOTO_PER_PAGE, queryParam), responseListener);
+        doGet(String.format(FLICKR_SEARCH_URL, BuildConfig.FLICKR_API_KEY, PHOTO_PER_PAGE, queryParam, method), responseListener);
     }
 
     public String buildPhotoUrl(String farm, String serverId, String id, String secret){

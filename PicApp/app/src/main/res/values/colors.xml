@@ -3,8 +3,11 @@
     <color name="colorPrimary">#03A9F4</color>
     <color name="colorPrimaryDark">#0288D1</color>
     <color name="colorAccent">#EEFF41</color>
+    <color name="colorAccentAux">#69F0AE</color>
 
     <color name="image_bg_holder">#c9c9c9</color>
 
     <color name="dialog_background">#7f000000</color>
+
+    <color name="bg_canvas">#99323232</color>
 </resources>

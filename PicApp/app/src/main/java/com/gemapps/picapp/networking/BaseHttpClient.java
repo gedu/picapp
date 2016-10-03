@@ -2,7 +2,6 @@ package com.gemapps.picapp.networking;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -34,7 +33,7 @@ public class BaseHttpClient {
     }
 
     protected void doGet(String url, CallbackResponse listener){
-        Log.d(TAG, "doGet: URL: "+url);
+
         mListener = listener;
 
         final OkHttpClient httpClient = new OkHttpClient();
