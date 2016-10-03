@@ -6,10 +6,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.helper.Utility;
@@ -17,6 +17,7 @@ import com.gemapps.picapp.networking.BaseHttpClient;
 import com.gemapps.picapp.networking.FlickrClient;
 import com.gemapps.picapp.ui.adapters.PicsAdapter;
 import com.gemapps.picapp.ui.model.PicItem;
+import com.gemapps.picapp.ui.model.QueryItem;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -39,8 +40,11 @@ public class PhotoListActivity extends BaseActivity {
     public static final String PHOTO_RECYCLER_LAYOUT = "picapp.photo_recycler_layout";
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.query_stub) ViewStub mQueryStub;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.progressBar) View mProgressBar;
+
+    private View mInflatedQuery;
 
     private LinearLayoutManager LINEAR_LAYOUT;
     private GridLayoutManager GRID_LAYOUT;
@@ -155,8 +159,17 @@ public class PhotoListActivity extends BaseActivity {
         if(resultCode == RESULT_OK && requestCode == SPECIFIC_GALLERY){
 
             String query = data.getExtras().getString(SearchActivity.QUERY);
-            Log.d(TAG, "onActivityResult: query: "+query);
             loadContent(query);
+            if(mInflatedQuery == null) mInflatedQuery = mQueryStub.inflate();
+            else mInflatedQuery.setVisibility(View.VISIBLE);
+
+            new QueryItem(mInflatedQuery, query, new QueryItem.ClearListener() {
+                @Override
+                public void onClear() {
+                    mInflatedQuery.setVisibility(View.GONE);
+                    loadContent();
+                }
+            });
         }
     }
 
