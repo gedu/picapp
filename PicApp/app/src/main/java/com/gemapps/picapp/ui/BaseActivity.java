@@ -34,4 +34,10 @@ public class BaseActivity extends AppCompatActivity {
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    protected void setToolbarTitle(String title){
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setTitle(title);
+        }
+    }
 }

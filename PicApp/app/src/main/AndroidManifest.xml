@@ -28,8 +28,12 @@
             android:name=".ui.SearchActivity"
             android:theme="@style/AppTheme.Translucent.Dialog">
         </activity>
-        <activity android:name=".ui.PhotoItemActivity"
-                  android:theme="@style/AppTheme.Translucent.Dialog">
+        <activity
+            android:name=".ui.PhotoItemActivity"
+            android:parentActivityName=".ui.PhotoListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.PhotoListActivity" />
         </activity>
     </application>
 
