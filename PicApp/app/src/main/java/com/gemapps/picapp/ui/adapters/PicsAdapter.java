@@ -25,9 +25,19 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
     private final Context context;
     private List<PicItem> items;
 
+    private int mGridHeight;
+    private int mLinearHeight;
+
+    private int mCurrentHeight;
+
     public PicsAdapter(List<PicItem> items, Context context) {
         this.items = items;
         this.context = context;
+
+        mLinearHeight = (int) context.getResources().getDimension(R.dimen.pic_item_linear_list_height);
+        mGridHeight = (int) context.getResources().getDimension(R.dimen.pic_item_grid_list_height);
+
+        mCurrentHeight = mLinearHeight;
     }
 
     @Override
@@ -43,8 +53,16 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
         PicItem item = items.get(position);
 
         holder.mTitle.setText(item.getTitle());
-        holder.mOwnerName.setText(item.getOwnerName());
+        holder.mOwnerName.setText(context.getString(R.string.owner_name, item.getOwnerName()));
         Picasso.with(context).load(item.getPicUrl()).into(holder.mImage);
+
+        ViewGroup.LayoutParams imageParam = holder.mImage.getLayoutParams();
+        imageParam.height = mCurrentHeight;
+        holder.mImage.setLayoutParams(imageParam);
+    }
+
+    public void updateImageHeigth(boolean isLinear){
+        mCurrentHeight = isLinear ? mLinearHeight : mGridHeight;
     }
 
     @Override
@@ -64,6 +82,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
         public PicViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+
         }
     }
 }

@@ -3,36 +3,37 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="2dp"
-    android:layout_marginTop="2dp">
+    android:layout_margin="2dp">
     <!--Hack to avoid the use of ItemDecorator-->
 
     <ImageView
         android:id="@+id/pic_image"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/pic_item_list_height"
-        android:scaleType="centerCrop"
-        android:src="@drawable/splash_screen"/>
+        android:layout_height="@dimen/pic_item_linear_list_height"
+        android:background="@color/image_bg_holder"
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:background="@android:color/black">
+        android:background="@drawable/text_overlay"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/pic_title_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:textColor="@android:color/white"/>
+            android:maxLines="1"/>
 
         <TextView
             android:id="@+id/pic_owner_name_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:maxLines="1"/>
 
     </LinearLayout>
 

@@ -2,6 +2,12 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.gemapps.picapp.ui.PhotoListActivity">
+
+    <item android:id="@+id/action_re_layout"
+          android:icon="@drawable/ic_view_module_white_24px"
+          android:title="@string/to_grid"
+          app:showAsAction="always"/>
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
