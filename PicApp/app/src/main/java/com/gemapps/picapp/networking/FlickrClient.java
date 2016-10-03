@@ -33,7 +33,7 @@ public class FlickrClient extends BaseHttpClient {
      */
     private static final String FLICKR_IMAGE_URL = "https://farm%s.staticflickr.com/%s/%s_%s_%s.jpg";
 
-    private static final String PHOTO_PER_PAGE = "50";
+    private static final String PHOTO_PER_PAGE = "45";
 
     public void getPhotoList(CallbackResponse responseListener){
 

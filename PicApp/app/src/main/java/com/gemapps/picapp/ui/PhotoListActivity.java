@@ -2,10 +2,10 @@ package com.gemapps.picapp.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +36,7 @@ public class PhotoListActivity extends BaseActivity {
     private static final String TAG = "PhotoListActivity";
     public static final String PHOTO_RECYCLER_LAYOUT = "picapp.photo_recycler_layout";
 
+    @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.progressBar) View mProgressBar;
 
@@ -57,6 +58,13 @@ public class PhotoListActivity extends BaseActivity {
         GRID_LAYOUT = new GridLayoutManager(this, 3, LinearLayoutManager.VERTICAL, false);
 
         mRecyclerView.setLayoutManager(isLinearLayout ? LINEAR_LAYOUT : GRID_LAYOUT);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                loadContent();
+            }
+        });
         loadContent();
     }
 
@@ -67,6 +75,7 @@ public class PhotoListActivity extends BaseActivity {
             @Override
             public void onFailure() {
                 //TODO: add error message
+                mSwipeRefreshLayout.setRefreshing(false);
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
 
@@ -94,7 +103,7 @@ public class PhotoListActivity extends BaseActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                mSwipeRefreshLayout.setRefreshing(false);
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
