@@ -5,5 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="pic_item_linear_list_height">320dp</dimen>
-    <dimen name="pic_item_grid_list_height">160dp</dimen>
+    <dimen name="pic_item_grid_list_height">140dp</dimen>
 </resources>

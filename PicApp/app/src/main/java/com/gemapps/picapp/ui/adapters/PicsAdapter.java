@@ -22,6 +22,10 @@ import butterknife.ButterKnife;
  */
 public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder> {
 
+    public interface OnItemClickListener {
+        void onClick(PicItem item, View title, View image);
+    }
+
     private final Context context;
     private List<PicItem> items;
 
@@ -29,6 +33,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
     private int mLinearHeight;
 
     private int mCurrentHeight;
+    private OnItemClickListener mListener;
 
     public PicsAdapter(List<PicItem> items, Context context) {
         this.items = items;
@@ -40,6 +45,10 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
         mCurrentHeight = mLinearHeight;
     }
 
+    public void setListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
     @Override
     public PicViewHolder onCreateViewHolder(ViewGroup parent,
                                             int viewType) {
@@ -49,16 +58,28 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(PicViewHolder holder, int position) {
-        PicItem item = items.get(position);
+    public void onBindViewHolder(final PicViewHolder holder, int position) {
+        final PicItem item = items.get(position);
 
         holder.mTitle.setText(item.getTitle());
         holder.mOwnerName.setText(context.getString(R.string.owner_name, item.getOwnerName()));
-        Picasso.with(context).load(item.getPicUrl()).into(holder.mImage);
+        Picasso.with(context)
+                .load(item.getPicUrl())
+                .placeholder(R.color.image_bg_holder)
+                .into(holder.mImage);
 
-        ViewGroup.LayoutParams imageParam = holder.mImage.getLayoutParams();
+        final ViewGroup.LayoutParams imageParam = holder.mImage.getLayoutParams();
         imageParam.height = mCurrentHeight;
         holder.mImage.setLayoutParams(imageParam);
+
+        holder.mContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(mListener != null) mListener.onClick(item, holder.mTitle, holder.mImage);
+            }
+        });
+
     }
 
     public void updateImageHeigth(boolean isLinear){
@@ -75,6 +96,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
 
     public class PicViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.pic_container) View mContainer;
         @BindView(R.id.pic_title_text) TextView mTitle;
         @BindView(R.id.pic_owner_name_text) TextView mOwnerName;
         @BindView(R.id.pic_image) ImageView mImage;
@@ -82,7 +104,6 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
         public PicViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-
         }
     }
 }

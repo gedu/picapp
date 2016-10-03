@@ -2,10 +2,13 @@ package com.gemapps.picapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -103,7 +106,7 @@ public class PhotoListActivity extends BaseActivity {
 
             @Override
             public void onSuccess(String response) {
-
+                
                 try {
                     JSONObject photoObj = new JSONObject(response);
                     JSONObject photoContent = new JSONObject(photoObj.getString(PHOTOS_KEY));
@@ -119,6 +122,7 @@ public class PhotoListActivity extends BaseActivity {
                     }
 
                     mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
+                    mPicsAdapter.setListener(mOnItemClickListener);
                     mPicsAdapter.updateImageHeigth(isLinearLayout);
                     mRecyclerView.setAdapter(mPicsAdapter);
 
@@ -196,6 +200,21 @@ public class PhotoListActivity extends BaseActivity {
             }
         });
     }
+
+    private final PicsAdapter.OnItemClickListener mOnItemClickListener = new PicsAdapter.OnItemClickListener() {
+        @Override
+        public void onClick(PicItem item, View title, View image) {
+            Intent intent = new Intent(PhotoListActivity.this, PhotoItemActivity.class);
+            intent.putExtra("item", item);
+
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(PhotoListActivity.this,
+                    Pair.create(title, "pic_title"),
+                    Pair.create(image, "pic_image"));
+
+            startActivity(intent, options.toBundle());
+        }
+    };
 
     @OnClick(R.id.fab)
     public void onFabClicked(View view){
