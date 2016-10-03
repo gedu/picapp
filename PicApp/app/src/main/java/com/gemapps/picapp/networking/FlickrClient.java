@@ -1,7 +1,5 @@
 package com.gemapps.picapp.networking;
 
-import android.util.Log;
-
 import com.gemapps.picapp.BuildConfig;
 
 /**
@@ -12,12 +10,18 @@ public class FlickrClient extends BaseHttpClient {
 
     private static final String TAG = "FlickrClient";
 
+    public static final String PHOTOS_KEY = "photos";
+    public static final String PHOTO_KEY = "photo";
+    public static final String OWNER_NAME_KEY = "ownername";
+    public static final String TITLE_KEY = "title";
+    public static final String URL_N_KEY = "url_n";
+
     private static final String FLICKR_SEARCH_URL = "https://api.flickr.com/services/rest/" +
             "?method=flickr.photos.getRecent" +
             "&api_key=%s&per_page=%s&sort=relevance&parse_tags=1&" +
             "extras=count_comments,count_faves,owner_name,url_n,url_c,url_b" +
             "&page=1&text=atardecer&format=json&nojsoncallback=1";
-    
+
     /**
      * farmId, serverId, id, secret and size
      *
@@ -31,19 +35,9 @@ public class FlickrClient extends BaseHttpClient {
 
     private static final String PHOTO_PER_PAGE = "50";
 
-    public void getPhotoList(){
+    public void getPhotoList(CallbackResponse responseListener){
 
-        doGet(String.format(FLICKR_SEARCH_URL, BuildConfig.FLICKR_API_KEY, PHOTO_PER_PAGE), new CallbackResponse() {
-            @Override
-            public void onFailure() {
-
-            }
-
-            @Override
-            public void onSuccess(String response) {
-                Log.d(TAG, "onSuccess() called with: response = [" + response + "]");
-            }
-        });
+        doGet(String.format(FLICKR_SEARCH_URL, BuildConfig.FLICKR_API_KEY, PHOTO_PER_PAGE), responseListener);
     }
 
     public String buildPhotoUrl(String farm, String serverId, String id, String secret){
