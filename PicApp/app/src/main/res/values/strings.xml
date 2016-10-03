@@ -5,4 +5,8 @@
 
     <string name="owner_name">by %s</string>
     <string name="to_grid">Grid view</string>
+    <string name="search_text_hint">Word to search</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
+    <string name="empty_text_error">Can\'t be empty</string>
 </resources>

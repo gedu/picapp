@@ -1,11 +1,12 @@
 package com.gemapps.picapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import static com.gemapps.picapp.networking.FlickrClient.PHOTO_KEY;
 public class PhotoListActivity extends BaseActivity {
 
     private static final String TAG = "PhotoListActivity";
+    private static final int SPECIFIC_GALLERY = 1;
     public static final String PHOTO_RECYCLER_LAYOUT = "picapp.photo_recycler_layout";
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -69,9 +71,13 @@ public class PhotoListActivity extends BaseActivity {
     }
 
     private void loadContent(){
+        loadContent("");
+    }
+
+    private void loadContent(String query){
         mProgressBar.setVisibility(View.VISIBLE);
 
-        new FlickrClient().getPhotoList(new BaseHttpClient.CallbackResponse() {
+        new FlickrClient().getPhotoList(query, new BaseHttpClient.CallbackResponse() {
             @Override
             public void onFailure() {
                 //TODO: add error message
@@ -123,7 +129,7 @@ public class PhotoListActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_re_layout:
                 isLinearLayout = !isLinearLayout;
                 Utility.getPrivateEditor(PhotoListActivity.this)
@@ -141,15 +147,23 @@ public class PhotoListActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && requestCode == SPECIFIC_GALLERY){
 
+            String query = data.getExtras().getString(SearchActivity.QUERY);
+            Log.d(TAG, "onActivityResult: query: "+query);
+            loadContent(query);
+        }
     }
 
     @OnClick(R.id.fab)
     public void onFabClicked(View view){
-        Snackbar.make(view, "Calling to Flickr", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
 
-
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivityForResult(intent, SPECIFIC_GALLERY);
     }
 }

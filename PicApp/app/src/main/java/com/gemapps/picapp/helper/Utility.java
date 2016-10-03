@@ -2,6 +2,7 @@ package com.gemapps.picapp.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 /**
  * Created by edu on 10/3/16.
@@ -30,5 +31,13 @@ public class Utility {
      */
     public static SharedPreferences.Editor getPrivateEditor(Context context){
         return context.getSharedPreferences(SHARED_PREFERENCE_KEY, Context.MODE_PRIVATE).edit();
+    }
+
+    /**
+     *
+     * @return true if lollipop and above, otherwise false
+     */
+    public static boolean isLollipop(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 }

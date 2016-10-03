@@ -12,15 +12,19 @@ public class FlickrClient extends BaseHttpClient {
 
     public static final String PHOTOS_KEY = "photos";
     public static final String PHOTO_KEY = "photo";
-    public static final String OWNER_NAME_KEY = "ownername";
-    public static final String TITLE_KEY = "title";
-    public static final String URL_N_KEY = "url_n";
 
+    private static final String QUERY_PARAM = "text=%s&";
+
+    /**
+     * 1 api_key
+     * 2 per_page
+     * 3 query
+     */
     private static final String FLICKR_SEARCH_URL = "https://api.flickr.com/services/rest/" +
             "?method=flickr.photos.getRecent" +
             "&api_key=%s&per_page=%s&sort=relevance&parse_tags=1&" +
             "extras=count_comments,count_faves,owner_name,url_n,url_c,url_b" +
-            "&page=1&text=atardecer&format=json&nojsoncallback=1";
+            "&page=1&%sformat=json&nojsoncallback=1";
 
     /**
      * farmId, serverId, id, secret and size
@@ -35,9 +39,11 @@ public class FlickrClient extends BaseHttpClient {
 
     private static final String PHOTO_PER_PAGE = "45";
 
-    public void getPhotoList(CallbackResponse responseListener){
+    public void getPhotoList(String query, CallbackResponse responseListener){
 
-        doGet(String.format(FLICKR_SEARCH_URL, BuildConfig.FLICKR_API_KEY, PHOTO_PER_PAGE), responseListener);
+        String queryParam = query.length() > 0 ? String.format(QUERY_PARAM, query) : "";
+
+        doGet(String.format(FLICKR_SEARCH_URL, BuildConfig.FLICKR_API_KEY, PHOTO_PER_PAGE, queryParam), responseListener);
     }
 
     public String buildPhotoUrl(String farm, String serverId, String id, String secret){
