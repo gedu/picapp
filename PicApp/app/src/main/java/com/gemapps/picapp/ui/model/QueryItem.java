@@ -11,8 +11,8 @@ import butterknife.OnClick;
 
 /**
  * Created by edu on 10/3/16.
+ * Wrapper class for the ViewStub to make it work with Butter knife
  */
-
 public class QueryItem {
 
     public interface ClearListener {

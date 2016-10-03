@@ -37,6 +37,7 @@ public class PhotoListActivity extends BaseActivity {
 
     private static final String TAG = "PhotoListActivity";
     private static final int SPECIFIC_GALLERY = 1;
+    public static final String SAVED_QUERY_PREF = "saved_query";
     public static final String PHOTO_RECYCLER_LAYOUT = "picapp.photo_recycler_layout";
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -48,6 +49,8 @@ public class PhotoListActivity extends BaseActivity {
 
     private LinearLayoutManager LINEAR_LAYOUT;
     private GridLayoutManager GRID_LAYOUT;
+
+    private String mQuery = "";
 
     private boolean isLinearLayout = true;
 
@@ -71,7 +74,16 @@ public class PhotoListActivity extends BaseActivity {
                 loadContent();
             }
         });
-        loadContent();
+
+        if(savedInstanceState == null) loadContent();
+        else rebuildState(savedInstanceState);
+    }
+
+    private void rebuildState(Bundle savedInstanceState) {
+
+        mQuery = savedInstanceState.getString(SAVED_QUERY_PREF);
+        loadContent(mQuery);
+        showQueryPill();
     }
 
     private void loadContent(){
@@ -120,6 +132,14 @@ public class PhotoListActivity extends BaseActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putString(SAVED_QUERY_PREF, mQuery);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_photo_list, menu);
         MenuItem item = menu.getItem(0);
@@ -158,19 +178,23 @@ public class PhotoListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK && requestCode == SPECIFIC_GALLERY){
 
-            String query = data.getExtras().getString(SearchActivity.QUERY);
-            loadContent(query);
-            if(mInflatedQuery == null) mInflatedQuery = mQueryStub.inflate();
-            else mInflatedQuery.setVisibility(View.VISIBLE);
-
-            new QueryItem(mInflatedQuery, query, new QueryItem.ClearListener() {
-                @Override
-                public void onClear() {
-                    mInflatedQuery.setVisibility(View.GONE);
-                    loadContent();
-                }
-            });
+            mQuery = data.getExtras().getString(SearchActivity.QUERY);
+            loadContent(mQuery);
+            showQueryPill();
         }
+    }
+
+    private void showQueryPill(){
+        if(mInflatedQuery == null) mInflatedQuery = mQueryStub.inflate();
+        else mInflatedQuery.setVisibility(View.VISIBLE);
+
+        new QueryItem(mInflatedQuery, mQuery, new QueryItem.ClearListener() {
+            @Override
+            public void onClear() {
+                mInflatedQuery.setVisibility(View.GONE);
+                loadContent();
+            }
+        });
     }
 
     @OnClick(R.id.fab)
