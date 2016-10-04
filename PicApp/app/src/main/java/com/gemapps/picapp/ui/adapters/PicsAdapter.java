@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gemapps.picapp.R;
@@ -20,14 +21,19 @@ import butterknife.ButterKnife;
 /**
  * Created by edu on 10/2/16.
  */
-public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder> {
+public class PicsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String TAG = "PicsAdapter";
 
     public interface OnItemClickListener {
         void onClick(PicItem item, View title, View image);
     }
 
+    public static final int VIEW_LOADING_TYPE = 0;
+    public static final int VIEW_ITEM_TYPE = 1;
+
     private final Context context;
-    private List<PicItem> items;
+    private List<PicItem> mItems;
 
     private int mGridHeight;
     private int mLinearHeight;
@@ -36,7 +42,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
     private OnItemClickListener mListener;
 
     public PicsAdapter(List<PicItem> items, Context context) {
-        this.items = items;
+        this.mItems = items;
         this.context = context;
 
         mLinearHeight = (int) context.getResources().getDimension(R.dimen.pic_item_linear_list_height);
@@ -50,48 +56,81 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
     }
 
     @Override
-    public PicViewHolder onCreateViewHolder(ViewGroup parent,
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                             int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.pic_item_list_view, parent, false);
-        return new PicViewHolder(v);
+
+        if(viewType == VIEW_ITEM_TYPE) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.pic_item_list_view, parent, false);
+            return new PicViewHolder(v);
+        }else {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.bottom_progress_item_list, parent, false);
+            return new LoadingHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final PicViewHolder holder, int position) {
-        final PicItem item = items.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        final PicItem item = mItems.get(position);
 
-        holder.mTitle.setText(item.getTitle());
-        holder.mOwnerName.setText(context.getString(R.string.owner_name, item.getOwnerName()));
-        Picasso.with(context)
-                .load(item.getPicUrl())
-                .placeholder(R.color.image_bg_holder)
-                .into(holder.mImage);
+        if(holder instanceof PicViewHolder) {
 
-        final ViewGroup.LayoutParams imageParam = holder.mImage.getLayoutParams();
-        imageParam.height = mCurrentHeight;
-        holder.mImage.setLayoutParams(imageParam);
+            final PicViewHolder picHolder = (PicViewHolder)holder;
+            picHolder.mTitle.setText(item.getTitle());
+            picHolder.mOwnerName.setText(context.getString(R.string.owner_name, item.getOwnerName()));
+            Picasso.with(context)
+                    .load(item.getPicUrl())
+                    .placeholder(R.color.image_bg_holder)
+                    .into(picHolder.mImage);
 
-        holder.mContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            final ViewGroup.LayoutParams imageParam = picHolder.mImage.getLayoutParams();
+            imageParam.height = mCurrentHeight;
+            picHolder.mImage.setLayoutParams(imageParam);
 
-                if(mListener != null) mListener.onClick(item, holder.mTitle, holder.mImage);
-            }
-        });
+            picHolder.mContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                    if (mListener != null) mListener.onClick(item, picHolder.mTitle, picHolder.mImage);
+                }
+            });
+        }
     }
 
-    public void updateImageHeigth(boolean isLinear){
+    public void addContent(List<PicItem> moreContent){
+        int insertedPos = getItemCount();
+        mItems.addAll(moreContent);
+        notifyItemRangeInserted(insertedPos, moreContent.size());
+    }
+
+    public void updateImageHeight(boolean isLinear){
         mCurrentHeight = isLinear ? mLinearHeight : mGridHeight;
     }
 
+    public void addProgressItem(){
+        mItems.add(null);
+        notifyItemChanged(mItems.size());
+    }
+
+    public void removeProgressItem(){
+        mItems.remove(null);
+        notifyItemRemoved(mItems.size() + 1);
+    }
+
+
+
     @Override
     public int getItemCount() {
-        if (items == null) {
+        if (mItems == null) {
             return 0;
         }
-        return items.size();
+        return mItems.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mItems.get(position) == null ? VIEW_LOADING_TYPE : VIEW_ITEM_TYPE;
     }
 
     public class PicViewHolder extends RecyclerView.ViewHolder {
@@ -102,6 +141,16 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.PicViewHolder>
         @BindView(R.id.pic_image) ImageView mImage;
 
         public PicViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
+    public class LoadingHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.progressBar) ProgressBar mProgressBar;
+
+        public LoadingHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

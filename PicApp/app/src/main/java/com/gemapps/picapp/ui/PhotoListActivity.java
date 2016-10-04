@@ -34,6 +34,7 @@ import butterknife.OnClick;
 
 import static com.gemapps.picapp.networking.FlickrClient.PHOTOS_KEY;
 import static com.gemapps.picapp.networking.FlickrClient.PHOTO_KEY;
+import static com.gemapps.picapp.ui.PhotoItemActivity.ITEM_EXTRA_KEY;
 
 public class PhotoListActivity extends BaseActivity {
 
@@ -52,9 +53,11 @@ public class PhotoListActivity extends BaseActivity {
     private LinearLayoutManager LINEAR_LAYOUT;
     private GridLayoutManager GRID_LAYOUT;
 
+    private int mCurrentPage = 1;
     private String mQuery = "";
 
-    private boolean isLinearLayout = true;
+    private boolean mIsLoadingMore = false;
+    private boolean mIsLinearLayout = true;
 
     PicsAdapter mPicsAdapter;
 
@@ -63,16 +66,20 @@ public class PhotoListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_list);
 
-        isLinearLayout = Utility.getPrivatePreferences(this).getBoolean(PHOTO_RECYCLER_LAYOUT, true);
+        mIsLinearLayout = Utility.getPrivatePreferences(this).getBoolean(PHOTO_RECYCLER_LAYOUT, true);
 
         LINEAR_LAYOUT = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         GRID_LAYOUT = new GridLayoutManager(this, 3, LinearLayoutManager.VERTICAL, false);
 
-        mRecyclerView.setLayoutManager(isLinearLayout ? LINEAR_LAYOUT : GRID_LAYOUT);
+        GRID_LAYOUT.setSpanSizeLookup(mSpanLookup);
+
+        mRecyclerView.setLayoutManager(mIsLinearLayout ? LINEAR_LAYOUT : GRID_LAYOUT);
+        mRecyclerView.addOnScrollListener(mScrollListener);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
+                mCurrentPage = 1;
                 loadContent(mQuery);
             }
         });
@@ -89,16 +96,22 @@ public class PhotoListActivity extends BaseActivity {
     }
 
     private void loadContent(){
-        loadContent("");
+        loadContent(String.valueOf(mCurrentPage), "");
     }
 
     private void loadContent(String query){
+        loadContent(String.valueOf(mCurrentPage), query);
+    }
+
+    private void loadContent(String page, String query){
         mProgressBar.setVisibility(View.VISIBLE);
 
-        new FlickrClient().getPhotoList(query, new BaseHttpClient.CallbackResponse() {
+        new FlickrClient().getPhotoList(page, query, new BaseHttpClient.CallbackResponse() {
             @Override
             public void onFailure() {
                 //TODO: add error message
+                mPicsAdapter.removeProgressItem();
+                mIsLoadingMore = false;
                 mSwipeRefreshLayout.setRefreshing(false);
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
@@ -120,14 +133,20 @@ public class PhotoListActivity extends BaseActivity {
                         picItems.add(picItem);
                     }
 
-                    mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
-                    mPicsAdapter.setListener(mOnItemClickListener);
-                    mPicsAdapter.updateImageHeigth(isLinearLayout);
-                    mRecyclerView.setAdapter(mPicsAdapter);
+                    if(mIsLoadingMore){
+                        mPicsAdapter.removeProgressItem();
+                        mPicsAdapter.addContent(picItems);
+                    }else {
+                        mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
+                        mPicsAdapter.setListener(mOnItemClickListener);
+                        mPicsAdapter.updateImageHeight(mIsLinearLayout);
+                        mRecyclerView.setAdapter(mPicsAdapter);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                mIsLoadingMore = false;
                 mSwipeRefreshLayout.setRefreshing(false);
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
@@ -147,7 +166,7 @@ public class PhotoListActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.menu_photo_list, menu);
         MenuItem item = menu.getItem(0);
         if(item.getItemId() == R.id.action_re_layout){
-            item.setIcon(getResources().getDrawable(!isLinearLayout ?
+            item.setIcon(getResources().getDrawable(!mIsLinearLayout ?
                     R.drawable.ic_view_list_white_24px : R.drawable.ic_view_module_white_24px));
         }
         return super.onCreateOptionsMenu(menu);
@@ -158,16 +177,16 @@ public class PhotoListActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.action_re_layout:
-                isLinearLayout = !isLinearLayout;
+                mIsLinearLayout = !mIsLinearLayout;
                 Utility.getPrivateEditor(PhotoListActivity.this)
-                        .putBoolean(PHOTO_RECYCLER_LAYOUT, isLinearLayout)
+                        .putBoolean(PHOTO_RECYCLER_LAYOUT, mIsLinearLayout)
                         .apply();
 
-                item.setIcon(getResources().getDrawable(!isLinearLayout ?
+                item.setIcon(getResources().getDrawable(!mIsLinearLayout ?
                         R.drawable.ic_view_list_white_24px : R.drawable.ic_view_module_white_24px));
 
-                mRecyclerView.setLayoutManager(isLinearLayout ? LINEAR_LAYOUT : GRID_LAYOUT);
-                mPicsAdapter.updateImageHeigth(isLinearLayout);
+                mRecyclerView.setLayoutManager(mIsLinearLayout ? LINEAR_LAYOUT : GRID_LAYOUT);
+                mPicsAdapter.updateImageHeight(mIsLinearLayout);
                 mPicsAdapter.notifyDataSetChanged();
 
                 return true;
@@ -205,11 +224,9 @@ public class PhotoListActivity extends BaseActivity {
         @Override
         public void onClick(PicItem item, View title, View image) {
             Intent intent = new Intent(PhotoListActivity.this, PhotoItemActivity.class);
-            intent.putExtra("item", item);
-
+            intent.putExtra(ITEM_EXTRA_KEY, item);
 
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(PhotoListActivity.this,
-                    Pair.create(title, "pic_title"),
                     Pair.create(image, "pic_image"));
 
             startActivity(intent, options.toBundle());
@@ -222,4 +239,49 @@ public class PhotoListActivity extends BaseActivity {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivityForResult(intent, SPECIFIC_GALLERY);
     }
+
+    private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            if (dy > 0) {
+                int totalItems = mRecyclerView.getLayoutManager().getItemCount();
+                int lastVisibleItem = 0;
+
+                if (mIsLinearLayout) {
+                    lastVisibleItem = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
+                            .findLastVisibleItemPosition();
+                } else {
+                    lastVisibleItem = ((GridLayoutManager) mRecyclerView.getLayoutManager())
+                            .findLastVisibleItemPosition();
+                }
+
+                //note: +3 how many of items to have below the current scroll position before loading more
+                if (!mIsLoadingMore && totalItems <= (lastVisibleItem + 3)) {
+
+                    mPicsAdapter.addProgressItem();
+                    mCurrentPage++;
+                    loadContent();
+                    mIsLoadingMore = true;
+                }
+
+            }
+        }
+    };
+
+    private final GridLayoutManager.SpanSizeLookup mSpanLookup = new GridLayoutManager.SpanSizeLookup() {
+        @Override
+        public int getSpanSize(int position) {
+
+            return mIsLoadingMore &&
+                    mPicsAdapter.getItemViewType(position) == PicsAdapter.VIEW_LOADING_TYPE ?
+                    GRID_LAYOUT.getSpanCount() : 1;
+        }
+    };
 }
