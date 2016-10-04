@@ -10,4 +10,7 @@
     <string name="accept">Accept</string>
     <string name="empty_text_error">Can\'t be empty</string>
     <string name="photo">Photo</string>
+    <string name="empty_list_text_error">No pics found</string>
+    <string name="noconnection_text_error">Can\'t load search results</string>
+    <string name="try_again">Try again</string>
 </resources>
