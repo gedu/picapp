@@ -1,23 +1,20 @@
 package com.gemapps.picapp.ui;
 
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.ListView;
 
 import com.gemapps.picapp.R;
+import com.gemapps.picapp.ui.model.PicDescription;
 import com.gemapps.picapp.ui.model.PicItem;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 
 public class PhotoItemActivity extends BaseActivity {
 
-//    @BindView(R.id.pic_title_text) TextView mTitleView;
-    @BindView(R.id.pic_image) ImageView mImageView;
-    @BindView(R.id.pic_comments) TextView mCommentsView;
-    @BindView(R.id.pic_faves) TextView mFavesView;
+    public static final String ITEM_EXTRA_KEY = "picapp_item";
 
-    private PicItem mPicItem;
+    @BindView(R.id.nested_scroll) ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +22,14 @@ public class PhotoItemActivity extends BaseActivity {
         setContentView(R.layout.activity_photo_item);
 
         setUpButtonToolbar();
-        mPicItem = (PicItem) getIntent().getExtras().getSerializable("item");
 
-//        mTitleView.setText(mPicItem.getTitle());
-        setToolbarTitle(mPicItem.getTitle());
-        mCommentsView.setText(mPicItem.getComments());
-        mFavesView.setText(mPicItem.getFaves());
-        Picasso.with(this).load(mPicItem.getPicUrl()).into(mImageView);
+        View picDescriptionView = getLayoutInflater()
+                .inflate(R.layout.photo_item_header, mListView, false);
+
+        PicItem picItem = (PicItem) getIntent().getExtras().getSerializable(ITEM_EXTRA_KEY);
+
+        new PicDescription(picDescriptionView).setupDescription(this, picItem);
+        mListView.addHeaderView(picDescriptionView);
+        mListView.setAdapter(null);
     }
 }

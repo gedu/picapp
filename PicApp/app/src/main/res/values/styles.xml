@@ -32,7 +32,7 @@
     <style name="AppTheme.Translucent.Dialog" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="colorAccent">@color/colorAccentAux</item>
+        <item name="colorAccent">@color/colorAccentDark</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
