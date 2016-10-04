@@ -3,12 +3,16 @@ package com.gemapps.picapp.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 
 /**
  * Created by edu on 10/3/16.
  */
 
 public class Utility {
+
+    private static Interpolator fastOutSlowIn;
 
     public static final String SHARED_PREFERENCE_KEY = "com.gemapps.picapp.SharedPreference";
 
@@ -39,5 +43,13 @@ public class Utility {
      */
     public static boolean isLollipop(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static Interpolator getFastOutSlowInInterpolator(Context context) {
+        if (fastOutSlowIn == null) {
+            fastOutSlowIn = AnimationUtils.loadInterpolator(context,
+                    android.R.interpolator.fast_out_slow_in);
+        }
+        return fastOutSlowIn;
     }
 }

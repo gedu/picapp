@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,27 +15,18 @@ import android.view.ViewStub;
 
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.helper.Utility;
-import com.gemapps.picapp.networking.BaseHttpClient;
 import com.gemapps.picapp.networking.FlickrClient;
 import com.gemapps.picapp.ui.adapters.PicsAdapter;
 import com.gemapps.picapp.ui.model.NoConnectionItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.QueryItem;
-import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static com.gemapps.picapp.networking.FlickrClient.PHOTOS_KEY;
-import static com.gemapps.picapp.networking.FlickrClient.PHOTO_KEY;
 import static com.gemapps.picapp.ui.PhotoItemActivity.ITEM_EXTRA_KEY;
 
 public class PhotoListActivity extends BaseActivity {
@@ -139,7 +129,7 @@ public class PhotoListActivity extends BaseActivity {
         if(!mIsLoadingMore)
             mProgressBar.setVisibility(View.VISIBLE);
 
-        new FlickrClient().getPhotoList(page, query, new BaseHttpClient.CallbackResponse() {
+        new FlickrClient().getPhotoList(page, query, new FlickrClient.FlickrListener() {
             @Override
             public void onFailure() {
 
@@ -161,39 +151,21 @@ public class PhotoListActivity extends BaseActivity {
             }
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(List<PicItem> picItems) {
 
-                try {
-
-                    JSONObject photoObj = new JSONObject(response);
-                    JSONObject photoContent = new JSONObject(photoObj.getString(PHOTOS_KEY));
-                    JSONArray photos = new JSONArray(photoContent.getString(PHOTO_KEY));
-
-                    int length = photos.length();
-                    Gson gson = new Gson();
-                    List<PicItem> picItems = new ArrayList<PicItem>();
-                    for (int i = 0; i < length; i++) {
-
-                        PicItem picItem = gson.fromJson(photos.getString(i), PicItem.class);
-                        picItems.add(picItem);
+                updateEmptyView((picItems.size() == 0 ));
+                if(picItems.size() > 0 ) {
+                    if (mIsLoadingMore) {
+                        mPicsAdapter.removeProgressItem();
+                        mPicsAdapter.addContent(picItems);
+                    } else {
+                        mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
+                        mPicsAdapter.setListener(mOnItemClickListener);
+                        mPicsAdapter.updateImageHeight(mIsLinearLayout);
+                        mRecyclerView.setAdapter(mPicsAdapter);
                     }
-
-                    updateEmptyView((picItems.size() == 0 ));
-                    if(picItems.size() > 0 ) {
-                        if (mIsLoadingMore) {
-                            mPicsAdapter.removeProgressItem();
-                            mPicsAdapter.addContent(picItems);
-                        } else {
-                            mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
-                            mPicsAdapter.setListener(mOnItemClickListener);
-                            mPicsAdapter.updateImageHeight(mIsLinearLayout);
-                            mRecyclerView.setAdapter(mPicsAdapter);
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
                 mIsLoadingMore = false;
                 mSwipeRefreshLayout.setRefreshing(false);
                 mProgressBar.setVisibility(View.INVISIBLE);
@@ -277,8 +249,8 @@ public class PhotoListActivity extends BaseActivity {
             Intent intent = new Intent(PhotoListActivity.this, PhotoItemActivity.class);
             intent.putExtra(ITEM_EXTRA_KEY, item);
 
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(PhotoListActivity.this,
-                    Pair.create(image, "pic_image"));
+            ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(PhotoListActivity.this, image, "pic_image");
 
             startActivity(intent, options.toBundle());
         }

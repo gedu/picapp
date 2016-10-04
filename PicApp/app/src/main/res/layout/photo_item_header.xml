@@ -6,13 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/pic_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="300dp"
-        android:scaleType="fitCenter"
-        android:transitionName="pic_image"/>
+
 
     <TextView
         android:id="@+id/pic_title_text"
@@ -24,7 +18,6 @@
         android:padding="16dp"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:transitionName="pic_title"
         tools:text="My Awesome title"/>
 
     <LinearLayout
