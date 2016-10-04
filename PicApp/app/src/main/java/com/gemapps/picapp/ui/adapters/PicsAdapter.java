@@ -110,7 +110,7 @@ public class PicsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public void addProgressItem(){
         mItems.add(null);
-        notifyItemChanged(mItems.size());
+        notifyItemInserted(mItems.size());
     }
 
     public void removeProgressItem(){

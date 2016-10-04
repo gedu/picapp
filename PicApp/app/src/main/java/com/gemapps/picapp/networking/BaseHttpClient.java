@@ -33,7 +33,7 @@ public class BaseHttpClient {
     }
 
     protected void doGet(String url, CallbackResponse listener){
-
+        
         mListener = listener;
 
         final OkHttpClient httpClient = new OkHttpClient();

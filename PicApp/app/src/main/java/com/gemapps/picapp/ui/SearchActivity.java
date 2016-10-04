@@ -15,6 +15,7 @@ import butterknife.OnClick;
 public class SearchActivity extends BaseCardActivity {
 
     public static final String QUERY = "query";
+    public static final String QUERY_BUNDLE = "query_bundle";
 
     @BindView(R.id.search_title_edit) TextInputEditText mInput;
 
@@ -22,6 +23,10 @@ public class SearchActivity extends BaseCardActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        String query = getIntent().getExtras().getString(QUERY_BUNDLE);
+
+        mInput.setText(query);
 
         mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

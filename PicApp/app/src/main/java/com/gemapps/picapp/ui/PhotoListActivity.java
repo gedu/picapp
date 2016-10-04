@@ -240,6 +240,11 @@ public class PhotoListActivity extends BaseActivity {
                 mQuery = "";
                 loadContent();
             }
+
+            @Override
+            public void onUpdateQuery(String query) {
+                openSearchDialog(query);
+            }
         });
     }
 
@@ -257,9 +262,16 @@ public class PhotoListActivity extends BaseActivity {
     };
 
     @OnClick(R.id.fab)
-    public void onFabClicked(View view){
+    public void onFabClicked(){
 
+        openSearchDialog("");
+    }
+
+    private void openSearchDialog(String query){
         Intent intent = new Intent(this, SearchActivity.class);
+
+        intent.putExtra(SearchActivity.QUERY_BUNDLE, query);
+
         startActivityForResult(intent, SPECIFIC_GALLERY);
     }
 
@@ -289,12 +301,19 @@ public class PhotoListActivity extends BaseActivity {
                 if (!mIsLoadingMore && totalItems <= (lastVisibleItem + 3)) {
 
                     mIsLoadingMore = true;
-                    mPicsAdapter.addProgressItem();
-                    mCurrentPage++;
-                    loadContent();
+                    mHandler.post(mAddProgressRunnable);
                 }
 
             }
+        }
+    };
+
+    private final Runnable mAddProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mPicsAdapter.addProgressItem();
+            mCurrentPage++;
+            loadContent();
         }
     };
 

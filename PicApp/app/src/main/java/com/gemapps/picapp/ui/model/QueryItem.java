@@ -17,6 +17,7 @@ public class QueryItem {
 
     public interface ClearListener {
         void onClear();
+        void onUpdateQuery(String query);
     }
 
     @BindView(R.id.query_text) TextView mQueryView;
@@ -33,5 +34,11 @@ public class QueryItem {
     public void onClearClicked(){
 
         mListener.onClear();
+    }
+
+    @OnClick(R.id.query_text)
+    public void onQueryClicked(){
+
+        mListener.onUpdateQuery(mQueryView.getText().toString());
     }
 }
