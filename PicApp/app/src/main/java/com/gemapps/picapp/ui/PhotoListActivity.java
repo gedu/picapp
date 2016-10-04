@@ -2,6 +2,7 @@ package com.gemapps.picapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,7 @@ import com.gemapps.picapp.helper.Utility;
 import com.gemapps.picapp.networking.BaseHttpClient;
 import com.gemapps.picapp.networking.FlickrClient;
 import com.gemapps.picapp.ui.adapters.PicsAdapter;
+import com.gemapps.picapp.ui.model.NoConnectionItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.QueryItem;
 import com.google.gson.Gson;
@@ -32,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static android.view.View.GONE;
 import static com.gemapps.picapp.networking.FlickrClient.PHOTOS_KEY;
 import static com.gemapps.picapp.networking.FlickrClient.PHOTO_KEY;
 import static com.gemapps.picapp.ui.PhotoItemActivity.ITEM_EXTRA_KEY;
@@ -45,8 +48,12 @@ public class PhotoListActivity extends BaseActivity {
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.query_stub) ViewStub mQueryStub;
+    @BindView(R.id.no_connection_stub) ViewStub mNoConnectionStub;
+    @BindView(R.id.empty_list_stub) ViewStub mEmptyListStub;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.progressBar) View mProgressBar;
+
+    private final Handler mHandler = new Handler();
 
     private View mInflatedQuery;
 
@@ -56,10 +63,13 @@ public class PhotoListActivity extends BaseActivity {
     private int mCurrentPage = 1;
     private String mQuery = "";
 
+    private boolean mOnError = false;
     private boolean mIsLoadingMore = false;
     private boolean mIsLinearLayout = true;
 
+
     PicsAdapter mPicsAdapter;
+    NoConnectionItem mNoConnectionItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,31 +105,66 @@ public class PhotoListActivity extends BaseActivity {
         if(mQuery.length() > 0) showQueryPill();
     }
 
+    private void updateEmptyView(boolean isEmpty){
+
+        mOnError = isEmpty;
+        if(mNoConnectionItem != null)
+            mNoConnectionItem.hideView();
+
+        mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        mEmptyListStub.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Load content using the defaults values
+     */
     private void loadContent(){
         loadContent(String.valueOf(mCurrentPage), "");
     }
 
+    /**
+     * Load content using the specific query
+     * @param query The text to search on flickr
+     */
     private void loadContent(String query){
         loadContent(String.valueOf(mCurrentPage), query);
     }
 
+    /**
+     * Load content from a page and text
+     * @param page The page to request
+     * @param query The text to search on flickr
+     */
     private void loadContent(String page, String query){
-        mProgressBar.setVisibility(View.VISIBLE);
+        if(!mIsLoadingMore)
+            mProgressBar.setVisibility(View.VISIBLE);
 
         new FlickrClient().getPhotoList(page, query, new BaseHttpClient.CallbackResponse() {
             @Override
             public void onFailure() {
-                //TODO: add error message
-                mPicsAdapter.removeProgressItem();
-                mIsLoadingMore = false;
-                mSwipeRefreshLayout.setRefreshing(false);
-                mProgressBar.setVisibility(View.INVISIBLE);
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mOnError = true;
+                        if(mNoConnectionItem == null)
+                            mNoConnectionItem = new NoConnectionItem(mNoConnectionStub.inflate(), mTryAgain);
+
+                        mNoConnectionItem.showView();
+                        if(mPicsAdapter != null) mPicsAdapter.removeProgressItem();
+                        mIsLoadingMore = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mRecyclerView.setVisibility(View.INVISIBLE);
+                    }
+                });
             }
 
             @Override
             public void onSuccess(String response) {
 
                 try {
+
                     JSONObject photoObj = new JSONObject(response);
                     JSONObject photoContent = new JSONObject(photoObj.getString(PHOTOS_KEY));
                     JSONArray photos = new JSONArray(photoContent.getString(PHOTO_KEY));
@@ -133,14 +178,17 @@ public class PhotoListActivity extends BaseActivity {
                         picItems.add(picItem);
                     }
 
-                    if(mIsLoadingMore){
-                        mPicsAdapter.removeProgressItem();
-                        mPicsAdapter.addContent(picItems);
-                    }else {
-                        mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
-                        mPicsAdapter.setListener(mOnItemClickListener);
-                        mPicsAdapter.updateImageHeight(mIsLinearLayout);
-                        mRecyclerView.setAdapter(mPicsAdapter);
+                    updateEmptyView((picItems.size() == 0 ));
+                    if(picItems.size() > 0 ) {
+                        if (mIsLoadingMore) {
+                            mPicsAdapter.removeProgressItem();
+                            mPicsAdapter.addContent(picItems);
+                        } else {
+                            mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
+                            mPicsAdapter.setListener(mOnItemClickListener);
+                            mPicsAdapter.updateImageHeight(mIsLinearLayout);
+                            mRecyclerView.setAdapter(mPicsAdapter);
+                        }
                     }
 
                 } catch (JSONException e) {
@@ -177,6 +225,9 @@ public class PhotoListActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.action_re_layout:
+
+                if(mOnError) return true;
+
                 mIsLinearLayout = !mIsLinearLayout;
                 Utility.getPrivateEditor(PhotoListActivity.this)
                         .putBoolean(PHOTO_RECYCLER_LAYOUT, mIsLinearLayout)
@@ -213,7 +264,7 @@ public class PhotoListActivity extends BaseActivity {
         new QueryItem(mInflatedQuery, mQuery, new QueryItem.ClearListener() {
             @Override
             public void onClear() {
-                mInflatedQuery.setVisibility(View.GONE);
+                mInflatedQuery.setVisibility(GONE);
                 mQuery = "";
                 loadContent();
             }
@@ -265,10 +316,10 @@ public class PhotoListActivity extends BaseActivity {
                 //note: +3 how many of items to have below the current scroll position before loading more
                 if (!mIsLoadingMore && totalItems <= (lastVisibleItem + 3)) {
 
+                    mIsLoadingMore = true;
                     mPicsAdapter.addProgressItem();
                     mCurrentPage++;
                     loadContent();
-                    mIsLoadingMore = true;
                 }
 
             }
@@ -282,6 +333,13 @@ public class PhotoListActivity extends BaseActivity {
             return mIsLoadingMore &&
                     mPicsAdapter.getItemViewType(position) == PicsAdapter.VIEW_LOADING_TYPE ?
                     GRID_LAYOUT.getSpanCount() : 1;
+        }
+    };
+
+    private final NoConnectionItem.TryAgainListener mTryAgain = new NoConnectionItem.TryAgainListener() {
+        @Override
+        public void onTry() {
+            loadContent();
         }
     };
 }
