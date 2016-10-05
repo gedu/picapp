@@ -30,7 +30,7 @@ public class TestDb {
     @Before
     public void setup(){
 
-//        deleteDatabase();
+        deleteDatabase();
     }
 
     private void deleteDatabase(){
@@ -46,7 +46,7 @@ public class TestDb {
         assertNotNull(picItem);
         assertNotNull(userItem);
 
-        PicSqlHelper helper = new PicSqlHelper(InstrumentationRegistry.getContext());
+        PicSqlHelper helper = new PicSqlHelper(InstrumentationRegistry.getTargetContext());
         SQLiteDatabase insertDb = helper.getWritableDatabase();
 
         ContentValues contentValues = PicappContract.PublicationEntry.parse(picItem, userItem);

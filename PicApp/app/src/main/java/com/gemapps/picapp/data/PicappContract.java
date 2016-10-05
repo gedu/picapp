@@ -42,9 +42,10 @@ public class PicappContract  {
                 COLUMN_OWNER_NSID + " TEXT NOT NULL, " +
                 COLUMN_OWNER_ID + " TEXT NOT NULL, " +
                 COLUMN_ICON_FARM_ID + " TEXT NOT NULL," +
-                COLUMN_ICON_SERVER_ID + " TEXT NOT NULL '', " +
+                COLUMN_ICON_SERVER_ID + " TEXT NOT NULL, " +
                 COLUMN_PIC_URL + " TEXT NOT NULL, " +
                 COLUMN_PIC_TITLE + " TEXT NOT NULL);";
+
         public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
         public static ContentValues parse(PicItem picItem, UserItem userItem){
