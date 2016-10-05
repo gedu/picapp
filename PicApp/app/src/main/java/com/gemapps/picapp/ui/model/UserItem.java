@@ -32,6 +32,10 @@ public class UserItem {
         return String.format(USER_PIC_URL, mIconFarmId, mIconServerId, mNsid);
     }
 
+    public static String getIconUrl(String iconFarm, String iconServer, String nsid){
+        return String.format(USER_PIC_URL, iconFarm, iconServer, nsid);
+    }
+
     public String getId() {
         return mId;
     }

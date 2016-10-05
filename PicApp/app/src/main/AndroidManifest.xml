@@ -30,12 +30,18 @@
         </activity>
         <activity
             android:name=".ui.PhotoItemActivity"
-            android:parentActivityName=".ui.PhotoListActivity"
-            android:label="@string/photo">
+            android:label="@string/photo"
+            android:parentActivityName=".ui.PhotoListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.PhotoListActivity" />
+                android:value=".ui.PhotoListActivity"/>
         </activity>
+        <activity android:name=".ui.BookmarkActivity">
+        </activity>
+
+        <provider
+            android:authorities="com.gemapps.picapp.data"
+            android:name=".data.PicContentProvider"/>
     </application>
 
 </manifest>

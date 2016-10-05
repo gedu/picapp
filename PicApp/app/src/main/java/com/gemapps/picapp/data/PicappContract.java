@@ -1,5 +1,6 @@
 package com.gemapps.picapp.data;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -17,12 +18,15 @@ public class PicappContract  {
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static final String PATH_PUBLICATION = "bookmark";
+    public static final String PATH_BOOKMARK = "bookmark";
 
     public static final class BookmarkEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
-                .appendPath(PATH_PUBLICATION).build();
+                .appendPath(PATH_BOOKMARK).build();
+
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
+                "/" + CONTENT_AUTHORITY + "/" + PATH_BOOKMARK;
 
         public static final String TABLE_NAME = "bookmark";
 

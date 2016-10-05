@@ -213,6 +213,9 @@ public class PhotoListActivity extends BaseActivity {
                 mPicsAdapter.notifyDataSetChanged();
 
                 return true;
+            case R.id.action_bookmark:
+                startActivity(new Intent(PhotoListActivity.this, BookmarkActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
