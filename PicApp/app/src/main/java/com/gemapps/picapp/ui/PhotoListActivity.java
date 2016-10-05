@@ -15,7 +15,7 @@ import android.view.ViewStub;
 
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.helper.Utility;
-import com.gemapps.picapp.networking.FlickrClient;
+import com.gemapps.picapp.networking.FlickrPhotosClient;
 import com.gemapps.picapp.ui.adapters.PicsAdapter;
 import com.gemapps.picapp.ui.model.NoConnectionItem;
 import com.gemapps.picapp.ui.model.PicItem;
@@ -129,7 +129,7 @@ public class PhotoListActivity extends BaseActivity {
         if(!mIsLoadingMore)
             mProgressBar.setVisibility(View.VISIBLE);
 
-        new FlickrClient().getPhotoList(page, query, new FlickrClient.FlickrListener() {
+        new FlickrPhotosClient().getPhotoList(page, query, new FlickrPhotosClient.FlickrListener() {
             @Override
             public void onFailure() {
 

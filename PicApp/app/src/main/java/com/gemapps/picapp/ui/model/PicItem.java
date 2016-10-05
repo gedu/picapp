@@ -1,21 +1,23 @@
 package com.gemapps.picapp.ui.model;
 
-import com.gemapps.picapp.networking.FlickrClient;
+import com.gemapps.picapp.networking.FlickrPhotosClient;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 /**
  * Created by edu on 10/2/16.
+ * Photo model to be used by Gson
  */
-
 public class PicItem implements Serializable {
 
     @SerializedName("title") private String mTitle;
+    @SerializedName("owner") private String mOwnerId;
     @SerializedName("ownername") private String mOwnerName;
     @SerializedName("url_n") private String mPicUrl;
     @SerializedName("count_faves") private String mFaves;
     @SerializedName("count_comments") private String mComments;
+    @SerializedName("date_taken") private String mPicDateTaken;
 
     @SerializedName("id") private String mPicId;
     @SerializedName("farm") private String mFarm;
@@ -24,12 +26,15 @@ public class PicItem implements Serializable {
 
     public PicItem() {}
 
-    public PicItem(String title, String ownerName, String picUrl, String faves, String comments, String picId, String farm, String serverId, String secretId) {
+    public PicItem(String title, String ownerId, String ownerName, String picUrl, String faves, String comments,
+                   String picDateTaken, String picId, String farm, String serverId, String secretId) {
         mTitle = title;
+        mOwnerId = ownerId;
         mOwnerName = ownerName;
         mPicUrl = picUrl;
         mFaves = faves;
         mComments = comments;
+        mPicDateTaken = picDateTaken;
         mPicId = picId;
         mFarm = farm;
         mServerId = serverId;
@@ -37,7 +42,23 @@ public class PicItem implements Serializable {
     }
 
     public String getBigPicUrl(){
-        return FlickrClient.buildPhotoUrl(mFarm, mServerId, mPicId, mSecretId, "c");
+        return FlickrPhotosClient.buildPhotoUrl(mFarm, mServerId, mPicId, mSecretId, "c");
+    }
+
+    public String getOwnerId() {
+        return mOwnerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        mOwnerId = ownerId;
+    }
+
+    public String getPicDateTaken() {
+        return mPicDateTaken;
+    }
+
+    public void setPicDateTaken(String picDateTaken) {
+        mPicDateTaken = picDateTaken;
     }
 
     public String getPicId() {

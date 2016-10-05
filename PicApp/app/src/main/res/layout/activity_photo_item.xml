@@ -8,23 +8,12 @@
     android:layout_height="match_parent"
     tools:context="com.gemapps.picapp.ui.PhotoItemActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/pic_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="300dp"
-            android:scaleType="fitCenter"
-            android:transitionName="pic_image"/>
+        <include layout="@layout/photo_item_header"/>
 
-        <ListView
-            android:id="@+id/nested_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
+    </ScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

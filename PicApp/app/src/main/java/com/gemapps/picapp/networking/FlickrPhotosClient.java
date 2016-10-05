@@ -15,7 +15,7 @@ import java.util.List;
  * Created by edu on 9/30/16.
  * Do the calls to the Flickr API.
  */
-public class FlickrClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse {
+public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse {
 
     public interface FlickrListener {
         void onFailure();
@@ -23,7 +23,7 @@ public class FlickrClient extends BaseHttpClient implements BaseHttpClient.Callb
         void onSuccess(List<PicItem> items);
     }
 
-    private static final String TAG = "FlickrClient";
+    private static final String TAG = "FlickrPhotosClient";
 
     public static final String PHOTOS_KEY = "photos";
     public static final String PHOTO_KEY = "photo";
@@ -41,7 +41,7 @@ public class FlickrClient extends BaseHttpClient implements BaseHttpClient.Callb
      */
     private static final String FLICKR_SEARCH_URL = "https://api.flickr.com/services/rest?" +
             "sort=relevance&parse_tags=1&content_type=7&api_key=%s&per_page=%s&page=%s&" +
-            "extras=count_comments,count_faves,owner_name,url_n,url_c,url_b" +
+            "extras=owner,date_taken,count_comments,count_faves,owner_name,url_n,url_c,url_b" +
             "&%sformat=json&nojsoncallback=1&method=flickr.photos.%s";
 
     /**
