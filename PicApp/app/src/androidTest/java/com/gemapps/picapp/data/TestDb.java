@@ -34,7 +34,7 @@ public class TestDb {
     }
 
     private void deleteDatabase(){
-        InstrumentationRegistry.getContext().deleteDatabase(PicappContract.PublicationEntry.TABLE_NAME);
+        InstrumentationRegistry.getContext().deleteDatabase(PicappContract.BookmarkEntry.TABLE_NAME);
     }
 
     @Test
@@ -49,26 +49,26 @@ public class TestDb {
         PicSqlHelper helper = new PicSqlHelper(InstrumentationRegistry.getTargetContext());
         SQLiteDatabase insertDb = helper.getWritableDatabase();
 
-        ContentValues contentValues = PicappContract.PublicationEntry.parse(picItem, userItem);
+        ContentValues contentValues = PicappContract.BookmarkEntry.parse(picItem, userItem);
 
-        long id = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME, null, contentValues);
+        long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
 
         assertNotEquals(-1, id);
 
 
         SQLiteDatabase readDb = helper.getReadableDatabase();
 
-        Cursor cursor = readDb.query(PicappContract.PublicationEntry.TABLE_NAME,
+        Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
                 null,
-                PicappContract.PublicationEntry._ID + "= ?",
+                PicappContract.BookmarkEntry._ID + "= ?",
                 new String[]{String.valueOf(id)},
                 null, null, null);
 
         assertNotNull(cursor);
 
         cursor.moveToFirst();
-        String ownerName = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_OWNER_NAME));
-        String nsid = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_OWNER_NSID));
+        String ownerName = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NAME));
+        String nsid = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NSID));
 
         assertEquals(ownerName, picItem.getOwnerName());
         assertEquals(nsid, userItem.getNsid());

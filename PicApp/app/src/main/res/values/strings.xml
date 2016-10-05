@@ -14,4 +14,7 @@
     <string name="noconnection_text_error">Can\'t load search results</string>
     <string name="try_again">Try again</string>
     <string name="add_bookmark_text">Add to bookmark</string>
+    <string name="saved">Saved</string>
+    <string name="saved_error_text">Can\'t add it into the Bookmark</string>
+    <string name="deleted">Deleted</string>
 </resources>
