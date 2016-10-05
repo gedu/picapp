@@ -86,27 +86,31 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
     @Override
     public void onSuccess(String response) {
 
-        JSONObject photoObj = null;
+
         try {
-            photoObj = new JSONObject(response);
 
-            JSONObject photoContent = new JSONObject(photoObj.getString(PHOTOS_KEY));
-            JSONArray photos = new JSONArray(photoContent.getString(PHOTO_KEY));
-
-            int length = photos.length();
-            Gson gson = new Gson();
-            List<PicItem> picItems = new ArrayList<PicItem>();
-            for (int i = 0; i < length; i++) {
-
-                PicItem picItem = gson.fromJson(photos.getString(i), PicItem.class);
-                picItems.add(picItem);
-            }
-
-            if (mListener != null) mListener.onSuccess(picItems);
+            if (mListener != null) mListener.onSuccess(parse(response));
 
         } catch (JSONException e) {
             onFailure();
         }
+    }
 
+    public List<PicItem> parse(String response) throws JSONException {
+
+        JSONObject photoObj = new JSONObject(response);
+
+        JSONObject photoContent = new JSONObject(photoObj.getString(PHOTOS_KEY));
+        JSONArray photos = new JSONArray(photoContent.getString(PHOTO_KEY));
+
+        int length = photos.length();
+        Gson gson = new Gson();
+        List<PicItem> picItems = new ArrayList<PicItem>();
+        for (int i = 0; i < length; i++) {
+
+            PicItem picItem = gson.fromJson(photos.getString(i), PicItem.class);
+            picItems.add(picItem);
+        }
+        return picItems;
     }
 }

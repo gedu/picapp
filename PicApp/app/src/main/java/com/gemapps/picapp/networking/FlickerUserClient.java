@@ -42,15 +42,19 @@ public class FlickerUserClient extends BaseHttpClient implements BaseHttpClient.
     public void onSuccess(String response) {
 
         try {
-            JSONObject userObj = new JSONObject(response);
 
-            Gson gson = new Gson();
-            mListener.onSuccess(gson.fromJson(userObj.getString("person"), UserItem.class));
+            mListener.onSuccess(parse(response));
 
         } catch (JSONException e) {
             onFailure();
         }
     }
 
+    public UserItem parse(String response) throws JSONException {
+        JSONObject userObj = new JSONObject(response);
+
+        Gson gson = new Gson();
+        return gson.fromJson(userObj.getString("person"), UserItem.class);
+    }
 
 }
