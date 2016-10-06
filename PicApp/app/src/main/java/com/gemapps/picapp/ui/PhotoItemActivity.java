@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,8 +64,9 @@ public class PhotoItemActivity extends BaseActivity {
 
             @Override
             public void onSuccess(UserItem userItem) {
-                mUserItem = userItem;
 
+                mUserItem = userItem;
+                mBookmarkItem.setVisible(true);
                 mInBookmark = existInDb();
                 if(mBookmarkItem != null){
                     updateBookmarkState();
@@ -92,7 +94,7 @@ public class PhotoItemActivity extends BaseActivity {
 
         getMenuInflater().inflate(R.menu.menu_photo_item, menu);
         mBookmarkItem = menu.getItem(0);
-
+        mBookmarkItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -104,6 +106,7 @@ public class PhotoItemActivity extends BaseActivity {
                 super.onBackPressed();
                 return true;
             case R.id.action_bookmark:
+
                 if (mInBookmark){
                     removePhotoFromBookmark();
                 }else{
@@ -150,6 +153,7 @@ public class PhotoItemActivity extends BaseActivity {
                 PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
                 SQLiteDatabase insertDb = helper.getWritableDatabase();
 
+                Log.d(TAG, "run: USER ITEM: "+mUserItem);
                 ContentValues contentValues = PicappContract.BookmarkEntry.parse(mPicItem, mUserItem);
 
                 long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
