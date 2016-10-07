@@ -7,6 +7,7 @@
     <dimen name="pic_item_linear_list_height">320dp</dimen>
     <dimen name="pic_item_grid_list_height">140dp</dimen>
     <dimen name="margin_point_width">600dp</dimen>
+    <dimen name="pic_item_height">420dp</dimen>
 
     <item name="match_parent" format="integer" type="dimen">-1</item>
     <item name="wrap_content" format="integer" type="dimen">-2</item>

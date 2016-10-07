@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class PhotoItemActivity extends BaseActivity {
     public static final String ITEM_EXTRA_KEY = "picapp_item";
 
     @BindView(R.id.activity_photo_item) CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
     @BindView(R.id.user_icon_image) ImageView mIconView;
     @BindView(R.id.user_name_text) TextView mUsernameView;
     @BindView(R.id.pic_title_text) TextView mTitleView;
@@ -80,6 +82,7 @@ public class PhotoItemActivity extends BaseActivity {
             }
         });
 
+        mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
         mUsernameView.setText(mPicItem.getOwnerName());
         mPicTakenDateView.setText(mPicItem.getPicDateTaken());
         mTitleView.setText(mPicItem.getTitle());

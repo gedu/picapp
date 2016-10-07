@@ -18,4 +18,5 @@
     <string name="saved_error_text">Can\'t add it into the Bookmark</string>
     <string name="deleted">Deleted</string>
     <string name="action_bookmark">Bookmarks</string>
+    <string name="bookmark">Bookmark</string>
 </resources>

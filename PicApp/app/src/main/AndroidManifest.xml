@@ -36,7 +36,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.PhotoListActivity"/>
         </activity>
-        <activity android:name=".ui.BookmarkActivity">
+        <activity
+            android:name=".ui.BookmarkActivity"
+            android:label="@string/bookmark"
+            android:theme="@style/AppTheme.DarkActionBar">
         </activity>
 
         <provider
