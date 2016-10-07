@@ -55,7 +55,7 @@ public class PhotoItemActivity extends BaseActivity {
 
         setUpButtonToolbar();
 
-        mPicItem = (PicItem) getIntent().getExtras().getSerializable(ITEM_EXTRA_KEY);
+        mPicItem = getIntent().getExtras().getParcelable(ITEM_EXTRA_KEY);
         new FlickerUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickerUserClient.UserListener() {
             @Override
             public void onFailure() {

@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by edu on 9/30/16.
@@ -20,7 +19,7 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
     public interface FlickrListener {
         void onFailure();
 
-        void onSuccess(List<PicItem> items);
+        void onSuccess(ArrayList<PicItem> items);
     }
 
     private static final String TAG = "FlickrPhotosClient";
@@ -96,7 +95,7 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
         }
     }
 
-    public List<PicItem> parse(String response) throws JSONException {
+    public ArrayList<PicItem> parse(String response) throws JSONException {
 
         JSONObject photoObj = new JSONObject(response);
 
@@ -105,7 +104,7 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
 
         int length = photos.length();
         Gson gson = new Gson();
-        List<PicItem> picItems = new ArrayList<PicItem>();
+        ArrayList<PicItem> picItems = new ArrayList<PicItem>();
         for (int i = 0; i < length; i++) {
 
             PicItem picItem = gson.fromJson(photos.getString(i), PicItem.class);

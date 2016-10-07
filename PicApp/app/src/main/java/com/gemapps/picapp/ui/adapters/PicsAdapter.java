@@ -13,6 +13,7 @@ import com.gemapps.picapp.R;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,7 +34,7 @@ public class PicsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int VIEW_ITEM_TYPE = 1;
 
     private final Context context;
-    private List<PicItem> mItems;
+    private ArrayList<PicItem> mItems;
 
     private int mGridHeight;
     private int mLinearHeight;
@@ -41,7 +42,7 @@ public class PicsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int mCurrentHeight;
     private OnItemClickListener mListener;
 
-    public PicsAdapter(List<PicItem> items, Context context) {
+    public PicsAdapter(ArrayList<PicItem> items, Context context) {
         this.mItems = items;
         this.context = context;
 
@@ -96,6 +97,10 @@ public class PicsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
         }
+    }
+
+    public ArrayList<PicItem> getPicItems(){
+        return mItems;
     }
 
     public void addContent(List<PicItem> moreContent){

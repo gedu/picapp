@@ -21,7 +21,7 @@ import com.gemapps.picapp.ui.model.NoConnectionItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.QueryItem;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -33,7 +33,9 @@ public class PhotoListActivity extends BaseActivity {
 
     private static final String TAG = "PhotoListActivity";
     private static final int SPECIFIC_GALLERY = 1;
-    public static final String SAVED_QUERY_PREF = "saved_query";
+    public static final String SAVED_QUERY_PREF = "picapp.saved_query";
+    public static final String PHOTO_LIST_PREF = "picapp.photo_list";
+    public static final String LOADING_MORE_PREF = "picapp.loading_more";
     public static final String PHOTO_RECYCLER_LAYOUT = "picapp.photo_recycler_layout";
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -91,7 +93,17 @@ public class PhotoListActivity extends BaseActivity {
     private void rebuildState(Bundle savedInstanceState) {
 
         mQuery = savedInstanceState.getString(SAVED_QUERY_PREF);
-        loadContent(mQuery);
+        mIsLoadingMore = savedInstanceState.getBoolean(LOADING_MORE_PREF);
+
+        if(savedInstanceState.containsKey(PHOTO_LIST_PREF)) {
+            ArrayList<PicItem> pics = (ArrayList<PicItem>) savedInstanceState.get(PHOTO_LIST_PREF);
+
+            if(pics != null && pics.size() > 0) populateList(pics);
+            else loadContent(mQuery);
+        } else {
+            loadContent(mQuery);
+        }
+
         if(mQuery.length() > 0) showQueryPill();
     }
 
@@ -151,32 +163,37 @@ public class PhotoListActivity extends BaseActivity {
             }
 
             @Override
-            public void onSuccess(List<PicItem> picItems) {
-
-                updateEmptyView((picItems.size() == 0 ));
-                if(picItems.size() > 0 ) {
-                    if (mIsLoadingMore) {
-                        mPicsAdapter.removeProgressItem();
-                        mPicsAdapter.addContent(picItems);
-                    } else {
-                        mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
-                        mPicsAdapter.setListener(mOnItemClickListener);
-                        mPicsAdapter.updateImageHeight(mIsLinearLayout);
-                        mRecyclerView.setAdapter(mPicsAdapter);
-                    }
-                }
-
-                mIsLoadingMore = false;
-                mSwipeRefreshLayout.setRefreshing(false);
-                mProgressBar.setVisibility(View.INVISIBLE);
+            public void onSuccess(ArrayList<PicItem> picItems) {
+                populateList(picItems);
             }
         });
+    }
+
+    private void populateList(ArrayList<PicItem> picItems){
+        updateEmptyView((picItems.size() == 0 ));
+        if(picItems.size() > 0 ) {
+            if (mIsLoadingMore) {
+                mPicsAdapter.removeProgressItem();
+                mPicsAdapter.addContent(picItems);
+            } else {
+                mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
+                mPicsAdapter.setListener(mOnItemClickListener);
+                mPicsAdapter.updateImageHeight(mIsLinearLayout);
+                mRecyclerView.setAdapter(mPicsAdapter);
+            }
+        }
+
+        mIsLoadingMore = false;
+        mSwipeRefreshLayout.setRefreshing(false);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
         outState.putString(SAVED_QUERY_PREF, mQuery);
+        outState.putParcelableArrayList(PHOTO_LIST_PREF, mPicsAdapter.getPicItems());
+        outState.putBoolean(LOADING_MORE_PREF, mIsLoadingMore);
 
         super.onSaveInstanceState(outState);
     }

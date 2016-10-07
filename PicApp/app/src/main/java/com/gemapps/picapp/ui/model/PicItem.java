@@ -1,15 +1,16 @@
 package com.gemapps.picapp.ui.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.gemapps.picapp.networking.FlickrPhotosClient;
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
 
 /**
  * Created by edu on 10/2/16.
  * Photo model to be used by Gson
  */
-public class PicItem implements Serializable {
+public class PicItem implements Parcelable {
 
     @SerializedName("title") private String mTitle;
     @SerializedName("owner") private String mOwnerId;
@@ -24,7 +25,19 @@ public class PicItem implements Serializable {
     @SerializedName("server") private String mServerId;
     @SerializedName("secret") private String mSecretId;
 
-    public PicItem() {}
+    public PicItem(Parcel in) {
+        mTitle = in.readString();
+        mOwnerId = in.readString();
+        mOwnerName = in.readString();
+        mPicUrl = in.readString();
+        mFaves = in.readString();
+        mComments = in.readString();
+        mPicDateTaken = in.readString();
+        mPicId = in.readString();
+        mFarm = in.readString();
+        mServerId = in.readString();
+        mSecretId = in.readString();
+    }
 
     public PicItem(String title, String ownerId, String ownerName, String picUrl, String faves, String comments,
                    String picDateTaken, String picId, String farm, String serverId, String secretId) {
@@ -40,6 +53,8 @@ public class PicItem implements Serializable {
         mServerId = serverId;
         mSecretId = secretId;
     }
+
+
 
     public String getBigPicUrl(){
         return FlickrPhotosClient.buildPhotoUrl(mFarm, mServerId, mPicId, mSecretId, "c");
@@ -132,4 +147,35 @@ public class PicItem implements Serializable {
     public void setPicUrl(String picUrl) {
         mPicUrl = picUrl;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(mTitle);
+        dest.writeString(mOwnerId);
+        dest.writeString(mOwnerName);
+        dest.writeString(mPicUrl);
+        dest.writeString(mFaves);
+        dest.writeString(mComments);
+        dest.writeString(mPicDateTaken);
+        dest.writeString(mPicId);
+        dest.writeString(mFarm);
+        dest.writeString(mServerId);
+        dest.writeString(mSecretId);
+    }
+
+    public static final Parcelable.Creator<PicItem> CREATOR = new Parcelable.Creator<PicItem>() {
+        public PicItem createFromParcel(Parcel in) {
+            return new PicItem(in);
+        }
+
+        public PicItem[] newArray(int size) {
+            return new PicItem[size];
+        }
+    };
 }
