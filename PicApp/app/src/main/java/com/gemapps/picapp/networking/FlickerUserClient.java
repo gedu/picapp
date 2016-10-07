@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 /**
  * Created by edu on 10/5/16.
+ *
+ * Flickr api to get a user info
  */
 
 public class FlickerUserClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse{

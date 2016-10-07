@@ -12,7 +12,8 @@ import java.util.ArrayList;
 
 /**
  * Created by edu on 9/30/16.
- * Do the calls to the Flickr API.
+ *
+ * Flickr api to get recent or search for photos
  */
 public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse {
 
