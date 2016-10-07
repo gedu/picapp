@@ -169,17 +169,25 @@ public class PhotoListActivity extends BaseActivity {
         });
     }
 
+    private void setupAdapter(ArrayList<PicItem> picItems){
+        mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
+        mPicsAdapter.setListener(mOnItemClickListener);
+        mPicsAdapter.updateImageHeight(mIsLinearLayout);
+        mRecyclerView.setAdapter(mPicsAdapter);
+    }
+
     private void populateList(ArrayList<PicItem> picItems){
         updateEmptyView((picItems.size() == 0 ));
         if(picItems.size() > 0 ) {
             if (mIsLoadingMore) {
+
+                if(mPicsAdapter == null) setupAdapter(picItems);
+                else mPicsAdapter.addContent(picItems);
+
                 mPicsAdapter.removeProgressItem();
-                mPicsAdapter.addContent(picItems);
+
             } else {
-                mPicsAdapter = new PicsAdapter(picItems, PhotoListActivity.this);
-                mPicsAdapter.setListener(mOnItemClickListener);
-                mPicsAdapter.updateImageHeight(mIsLinearLayout);
-                mRecyclerView.setAdapter(mPicsAdapter);
+                setupAdapter(picItems);
             }
         }
 
@@ -192,8 +200,9 @@ public class PhotoListActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
 
         outState.putString(SAVED_QUERY_PREF, mQuery);
-        outState.putParcelableArrayList(PHOTO_LIST_PREF, mPicsAdapter.getPicItems());
         outState.putBoolean(LOADING_MORE_PREF, mIsLoadingMore);
+        if(mPicsAdapter != null)
+            outState.putParcelableArrayList(PHOTO_LIST_PREF, mPicsAdapter.getPicItems());
 
         super.onSaveInstanceState(outState);
     }
