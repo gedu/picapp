@@ -1,5 +1,7 @@
 package com.gemapps.picapp.networking;
 
+import android.util.Log;
+
 import com.gemapps.picapp.BuildConfig;
 import com.gemapps.picapp.ui.model.CommentItem;
 import com.google.gson.Gson;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
  * Flickr api to get comments from a photo
  */
 public class FlickrCommentsClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse {
-
+    private static final String TAG = "FlickrCommentsClient";
     public interface CommentsListener {
         void onFailure();
         void onSuccess(ArrayList<CommentItem> comments);
@@ -36,7 +38,7 @@ public class FlickrCommentsClient extends BaseHttpClient implements BaseHttpClie
 
     @Override
     public void onFailure() {
-
+        Log.d(TAG, "onFailure: ");
         if(mListener != null) mListener.onFailure();
     }
 
@@ -45,7 +47,8 @@ public class FlickrCommentsClient extends BaseHttpClient implements BaseHttpClie
 
         try {
             JSONObject commentObj = new JSONObject(response);
-            JSONArray comments = new JSONArray(commentObj.getString("comment"));
+            JSONObject cObj = new JSONObject(commentObj.getString("comments"));
+            JSONArray comments = new JSONArray(cObj.getString("comment"));
 
             ArrayList<CommentItem> commentItems = new ArrayList<>();
             Gson gson = new Gson();

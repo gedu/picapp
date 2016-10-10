@@ -2,6 +2,8 @@ package com.gemapps.picapp.ui.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 /**
  * Created by edu on 10/7/16.
  * User model to be used by Gson
@@ -16,6 +18,8 @@ public class CommentItem {
     @SerializedName("iconfarm") private String mIconFarmId;
     @SerializedName("_content") private String mMsg;
 
+    public CommentItem() {}
+
     public CommentItem(String id, String authorId, String authorName, String dateCreated, String iconServerId, String iconFarmId, String msg) {
         mId = id;
         mAuthorId = authorId;
@@ -24,6 +28,10 @@ public class CommentItem {
         mIconServerId = iconServerId;
         mIconFarmId = iconFarmId;
         mMsg = msg;
+    }
+
+    public String getIconUrl(){
+        return UserItem.getIconUrl(mIconFarmId, mIconServerId, mAuthorId);
     }
 
     public String getId() {
@@ -52,6 +60,11 @@ public class CommentItem {
 
     public String getDateCreated() {
         return mDateCreated;
+    }
+
+    public Date getPicDate(){
+        Long ts = Long.parseLong(mDateCreated) * 1000L;
+        return new Date(ts);
     }
 
     public void setDateCreated(String dateCreated) {

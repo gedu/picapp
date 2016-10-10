@@ -8,21 +8,27 @@ import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.data.PicSqlHelper;
 import com.gemapps.picapp.data.PicappContract;
-import com.gemapps.picapp.helper.CircleTransform;
 import com.gemapps.picapp.networking.FlickerUserClient;
+import com.gemapps.picapp.networking.FlickrCommentsClient;
+import com.gemapps.picapp.ui.adapters.CommentAdapter;
+import com.gemapps.picapp.ui.model.CommentItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.BindView;
 
@@ -33,13 +39,9 @@ public class PhotoItemActivity extends BaseActivity {
 
     @BindView(R.id.activity_photo_item) CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-    @BindView(R.id.user_icon_image) ImageView mIconView;
-    @BindView(R.id.user_name_text) TextView mUsernameView;
-    @BindView(R.id.pic_title_text) TextView mTitleView;
-    @BindView(R.id.pic_comments) TextView mCommentView;
-    @BindView(R.id.pic_faves) TextView mFavesView;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+
     @BindView(R.id.pic_image) ImageView mImageView;
-    @BindView(R.id.pic_date_taken) TextView mPicTakenDateView;
 
     private PicItem mPicItem;
     private UserItem mUserItem;
@@ -58,6 +60,10 @@ public class PhotoItemActivity extends BaseActivity {
         setUpButtonToolbar();
 
         mPicItem = getIntent().getExtras().getParcelable(ITEM_EXTRA_KEY);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setAdapter(getLoadingAdapter());
+        mRecyclerView.setAdapter(new CommentAdapter(Collections.singletonList(new CommentItem()), mPicItem, this));
+
         new FlickerUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickerUserClient.UserListener() {
             @Override
             public void onFailure() {
@@ -74,20 +80,29 @@ public class PhotoItemActivity extends BaseActivity {
                     updateBookmarkState();
                 }
 
-                Picasso.with(PhotoItemActivity.this)
-                        .load(userItem.getIconUrl())
-                        .placeholder(R.drawable.ic_buddy)
-                        .error(R.drawable.ic_buddy)
-                        .transform(new CircleTransform()).into(mIconView);
+//                Picasso.with(PhotoItemActivity.this)
+//                        .load(userItem.getIconUrl())
+//                        .placeholder(R.drawable.ic_buddy)
+//                        .error(R.drawable.ic_buddy)
+//                        .transform(new CircleTransform()).into(mIconView);
+            }
+        });
+
+        new FlickrCommentsClient().getComments(mPicItem.getPicId(), new FlickrCommentsClient.CommentsListener() {
+            @Override
+            public void onFailure() {
+
+            }
+
+            @Override
+            public void onSuccess(ArrayList<CommentItem> comments) {
+
+                comments.add(0, new CommentItem());
+                mRecyclerView.setAdapter(new CommentAdapter(comments, mPicItem, PhotoItemActivity.this));
             }
         });
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        mUsernameView.setText(mPicItem.getOwnerName());
-        mPicTakenDateView.setText(mPicItem.getPicDateTaken());
-        mTitleView.setText(mPicItem.getTitle());
-        mCommentView.setText(mPicItem.getComments());
-        mFavesView.setText(mPicItem.getFaves());
 
         Picasso.with(this).load(mPicItem.getPicUrl()).into(mImageView);
     }
@@ -156,7 +171,6 @@ public class PhotoItemActivity extends BaseActivity {
                 PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
                 SQLiteDatabase insertDb = helper.getWritableDatabase();
 
-                Log.d(TAG, "run: USER ITEM: "+mUserItem);
                 ContentValues contentValues = PicappContract.BookmarkEntry.parse(mPicItem, mUserItem);
 
                 long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
@@ -196,4 +210,29 @@ public class PhotoItemActivity extends BaseActivity {
         readDb.close();
         return exist;
     }
+
+    private RecyclerView.Adapter<RecyclerView.ViewHolder> getLoadingAdapter(){
+        return new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new LoadingViewHolder(PhotoItemActivity.this.getLayoutInflater()
+                        .inflate(R.layout.loading, parent, false));
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {}
+
+            @Override
+            public int getItemCount() {
+                return 0;
+            }
+
+            class LoadingViewHolder extends RecyclerView.ViewHolder{
+
+                public LoadingViewHolder(View itemView) {
+                    super(itemView);
+                }
+            }
+        };
+    }//
 }
