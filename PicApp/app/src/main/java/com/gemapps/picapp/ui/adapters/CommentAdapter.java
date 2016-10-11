@@ -40,7 +40,7 @@ public class CommentAdapter extends BaseCommentAdapter {
 
     @Override
     protected void bindCommentViewHolder(RecyclerView.ViewHolder holder, int position) {
-        CommentItem item = items.get(position);
+        CommentItem item = mItems.get(position);
         CommentViewHolder cHolder = (CommentViewHolder) holder;
 
         cHolder.mAuthorName.setText(item.getAuthorName());

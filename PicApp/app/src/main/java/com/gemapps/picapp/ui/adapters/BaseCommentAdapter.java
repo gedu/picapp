@@ -1,6 +1,7 @@
 package com.gemapps.picapp.ui.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,20 +34,23 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
     public static final int COMMENT_VIEW_TYPE = 1;
 
     protected final Context mContext;
-    protected List<CommentItem> items;
-    protected PicItem mPicItem;
+    protected List<CommentItem> mItems;
+    private PicItem mPicItem;
 
     private UserItem mUserItem;
-
     private HeaderViewHolder mHeaderHolder;
 
+    private Resources mRes;
+    final NumberFormat nf = NumberFormat.getInstance();
+
     public BaseCommentAdapter(List<CommentItem> items, PicItem picItem, Context context) {
-        this.items = items;
+        this.mItems = items;
         this.mPicItem = picItem;
         this.mContext = context;
+        this.mRes = context.getResources();
 
         //Adding the header element
-        this.items.add(0, new CommentItem());
+        this.mItems.add(0, new CommentItem());
     }
 
     @Override
@@ -65,11 +70,16 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
             mHeaderHolder = (HeaderViewHolder) holder;
 
+            final int commentCount = mPicItem.getCommentAmount();
+            final int favesCount = mPicItem.getFavesAmount();
+
             mHeaderHolder.mUsernameView.setText(mPicItem.getOwnerName());
             mHeaderHolder.mPicTakenDateView.setText(mPicItem.getPicDateTaken());
             mHeaderHolder.mTitleView.setText(mPicItem.getTitle());
-            mHeaderHolder.mCommentView.setText(mPicItem.getComments());
-            mHeaderHolder.mFavesView.setText(mPicItem.getFaves());
+            mHeaderHolder.mCommentView.setText(mRes.getQuantityString(R.plurals.comments,
+                    commentCount, commentCount));
+            mHeaderHolder.mFavesView.setText(mRes.getQuantityString(R.plurals.faves, favesCount,
+                    favesCount));
 
             if(mUserItem != null) {
                 Picasso.with(mContext)
@@ -86,10 +96,10 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        if (items == null) {
+        if (mItems == null) {
             return 0;
         }
-        return items.size();
+        return mItems.size();
     }
 
     @Override

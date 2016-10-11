@@ -326,7 +326,7 @@ public class PhotoListActivity extends BaseActivity {
                             .findLastVisibleItemPosition();
                 }
 
-                //note: +3 how many of items to have below the current scroll position before loading more
+                //note: +3 how many of mItems to have below the current scroll position before loading more
                 if (!mIsLoadingMore && totalItems <= (lastVisibleItem + 3)) {
 
                     mIsLoadingMore = true;

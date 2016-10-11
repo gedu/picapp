@@ -112,6 +112,10 @@ public class PicItem implements Parcelable {
         return mFaves;
     }
 
+    public int getFavesAmount(){
+        return Integer.parseInt(mFaves);
+    }
+
     public void setFaves(String faves) {
         mFaves = faves;
     }
