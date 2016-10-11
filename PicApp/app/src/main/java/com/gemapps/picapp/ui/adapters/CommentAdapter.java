@@ -23,79 +23,37 @@ import butterknife.ButterKnife;
 /**
  * Created by edu on 10/7/16.
  */
-public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CommentAdapter extends BaseCommentAdapter {
 
     private static final String TAG = "CommentAdapter";
 
-    public static final int HEADER_VIEW_TYPE = 0;
-    public static final int COMMENT_VIEW_TYPE = 1;
-
-    private final Context mContext;
-    private List<CommentItem> items;
-    private PicItem mPicItem;
-
     public CommentAdapter(List<CommentItem> items, PicItem picItem, Context context) {
-        this.items = items;
-        this.mPicItem = picItem;
-        this.mContext = context;
+        super(items, picItem, context);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                int viewType) {
-
-        if(viewType == COMMENT_VIEW_TYPE) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.comment_list_item, parent, false);
-            return new CommentViewHolder(v);
-        }else{
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.photo_item_header, parent, false);
-            return new HeaderViewHolder(v);
-        }
+    protected RecyclerView.ViewHolder getCommentViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.comment_list_item, parent, false);
+        return new CommentViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(position == 0){
+    protected void bindCommentViewHolder(RecyclerView.ViewHolder holder, int position) {
+        CommentItem item = items.get(position);
+        CommentViewHolder cHolder = (CommentViewHolder) holder;
 
-            HeaderViewHolder hHolder = (HeaderViewHolder) holder;
+        cHolder.mAuthorName.setText(item.getAuthorName());
+        cHolder.mTime.setText(item.getDateCreated() == null ? "" :
+                DateUtils.getRelativeTimeSpanString(item.getPicDate().getTime(),
+                        System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS));
+        cHolder.mMsg.setText(item.getMsg());
 
-            hHolder.mUsernameView.setText(mPicItem.getOwnerName());
-
-            hHolder.mPicTakenDateView.setText(mPicItem.getPicDateTaken());
-            hHolder.mTitleView.setText(mPicItem.getTitle());
-            hHolder.mCommentView.setText(mPicItem.getComments());
-            hHolder.mFavesView.setText(mPicItem.getFaves());
-        }else{
-            CommentItem item = items.get(position);
-            CommentViewHolder cHolder = (CommentViewHolder) holder;
-
-            cHolder.mAuthorName.setText(item.getAuthorName());
-            cHolder.mTime.setText(item.getDateCreated() == null ? "" :
-                    DateUtils.getRelativeTimeSpanString(item.getPicDate().getTime(),
-                            System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS));
-            cHolder.mMsg.setText(item.getMsg());
-
-            Picasso.with(mContext)
-                    .load(item.getIconUrl())
-                    .error(R.drawable.ic_buddy)
-                    .transform(new CircleTransform())
-                    .into(cHolder.mUserIcon);
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        if (items == null) {
-            return 0;
-        }
-        return items.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position == 0 ? HEADER_VIEW_TYPE : COMMENT_VIEW_TYPE;
+        Picasso.with(mContext)
+                .load(item.getIconUrl())
+                .error(R.drawable.ic_buddy)
+                .transform(new CircleTransform())
+                .into(cHolder.mUserIcon);
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {
@@ -111,18 +69,4 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public class HeaderViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.user_icon_image) ImageView mIconView;
-        @BindView(R.id.user_name_text) TextView mUsernameView;
-        @BindView(R.id.pic_title_text) TextView mTitleView;
-        @BindView(R.id.pic_comments) TextView mCommentView;
-        @BindView(R.id.pic_faves) TextView mFavesView;
-        @BindView(R.id.pic_date_taken) TextView mPicTakenDateView;
-
-        public HeaderViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
 }

@@ -120,6 +120,10 @@ public class PicItem implements Parcelable {
         return mComments;
     }
 
+    public int getCommentAmount(){
+        return Integer.parseInt(mComments);
+    }
+
     public void setComments(String comments) {
         mComments = comments;
     }

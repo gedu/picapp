@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.gemapps.picapp.R;
@@ -21,14 +20,16 @@ import com.gemapps.picapp.data.PicSqlHelper;
 import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.networking.FlickerUserClient;
 import com.gemapps.picapp.networking.FlickrCommentsClient;
+import com.gemapps.picapp.ui.adapters.BaseCommentAdapter;
 import com.gemapps.picapp.ui.adapters.CommentAdapter;
+import com.gemapps.picapp.ui.adapters.LoadingCommentAdapter;
+import com.gemapps.picapp.ui.adapters.NoCommentAdapter;
 import com.gemapps.picapp.ui.model.CommentItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import butterknife.BindView;
 
@@ -45,8 +46,9 @@ public class PhotoItemActivity extends BaseActivity {
 
     private PicItem mPicItem;
     private UserItem mUserItem;
-
     private MenuItem mBookmarkItem;
+
+    private BaseCommentAdapter mCommentAdapter;
 
     private boolean mInBookmark = false;
 
@@ -61,9 +63,40 @@ public class PhotoItemActivity extends BaseActivity {
 
         mPicItem = getIntent().getExtras().getParcelable(ITEM_EXTRA_KEY);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(getLoadingAdapter());
-        mRecyclerView.setAdapter(new CommentAdapter(Collections.singletonList(new CommentItem()), mPicItem, this));
 
+        if(mPicItem.getCommentAmount() > 0){
+            loadComments();
+        }else {
+            mRecyclerView.setAdapter(getNoCommentsAdapter());
+        }
+
+        loadUserHeader();
+
+        mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
+        Picasso.with(this).load(mPicItem.getPicUrl()).into(mImageView);
+    }
+
+    private void loadComments(){
+
+        mRecyclerView.setAdapter(getLoadingAdapter());
+
+        new FlickrCommentsClient().getComments(mPicItem.getPicId(), new FlickrCommentsClient.CommentsListener() {
+            @Override
+            public void onFailure() {
+
+            }
+
+            @Override
+            public void onSuccess(ArrayList<CommentItem> comments) {
+
+                mCommentAdapter = new CommentAdapter(comments, mPicItem, PhotoItemActivity.this);
+                mRecyclerView.setAdapter(mCommentAdapter);
+            }
+        });
+    }
+
+    private void loadUserHeader(){
         new FlickerUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickerUserClient.UserListener() {
             @Override
             public void onFailure() {
@@ -80,31 +113,9 @@ public class PhotoItemActivity extends BaseActivity {
                     updateBookmarkState();
                 }
 
-//                Picasso.with(PhotoItemActivity.this)
-//                        .load(userItem.getIconUrl())
-//                        .placeholder(R.drawable.ic_buddy)
-//                        .error(R.drawable.ic_buddy)
-//                        .transform(new CircleTransform()).into(mIconView);
+                mCommentAdapter.setUserIcon(mUserItem);
             }
         });
-
-        new FlickrCommentsClient().getComments(mPicItem.getPicId(), new FlickrCommentsClient.CommentsListener() {
-            @Override
-            public void onFailure() {
-
-            }
-
-            @Override
-            public void onSuccess(ArrayList<CommentItem> comments) {
-
-                comments.add(0, new CommentItem());
-                mRecyclerView.setAdapter(new CommentAdapter(comments, mPicItem, PhotoItemActivity.this));
-            }
-        });
-
-        mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-
-        Picasso.with(this).load(mPicItem.getPicUrl()).into(mImageView);
     }
 
     @Override
@@ -212,27 +223,13 @@ public class PhotoItemActivity extends BaseActivity {
     }
 
     private RecyclerView.Adapter<RecyclerView.ViewHolder> getLoadingAdapter(){
-        return new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new LoadingViewHolder(PhotoItemActivity.this.getLayoutInflater()
-                        .inflate(R.layout.loading, parent, false));
-            }
+        mCommentAdapter = new LoadingCommentAdapter(new ArrayList<CommentItem>(), mPicItem, PhotoItemActivity.this);
+        return mCommentAdapter;
+    }
 
-            @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {}
+    private RecyclerView.Adapter<RecyclerView.ViewHolder> getNoCommentsAdapter(){
+        mCommentAdapter = new NoCommentAdapter(new ArrayList<CommentItem>(), mPicItem, PhotoItemActivity.this);
+        return mCommentAdapter;
+    }
 
-            @Override
-            public int getItemCount() {
-                return 0;
-            }
-
-            class LoadingViewHolder extends RecyclerView.ViewHolder{
-
-                public LoadingViewHolder(View itemView) {
-                    super(itemView);
-                }
-            }
-        };
-    }//
 }

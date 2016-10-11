@@ -35,6 +35,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:lines="1"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
         android:layout_toRightOf="@id/user_icon_image"
         android:layout_toEndOf="@id/user_icon_image"
         android:layout_toLeftOf="@id/comment_time"
@@ -45,11 +47,20 @@
         android:id="@+id/comment_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="24dp"
         android:layout_toRightOf="@id/user_icon_image"
         android:layout_toEndOf="@id/user_icon_image"
         android:layout_below="@id/author_name"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         tools:text="bla bla bla bla bla bla bla bla "/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/list_divider"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

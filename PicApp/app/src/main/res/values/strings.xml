@@ -19,4 +19,5 @@
     <string name="deleted">Deleted</string>
     <string name="action_bookmark">Bookmarks</string>
     <string name="bookmark">Bookmark</string>
+    <string name="no_comment_text">No comments</string>
 </resources>

@@ -12,4 +12,6 @@
     <item name="match_parent" format="integer" type="dimen">-1</item>
     <item name="wrap_content" format="integer" type="dimen">-2</item>
 
+    <dimen name="keyline_1">72dp</dimen>
+
 </resources>

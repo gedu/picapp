@@ -18,7 +18,9 @@ public class CommentItem {
     @SerializedName("iconfarm") private String mIconFarmId;
     @SerializedName("_content") private String mMsg;
 
-    public CommentItem() {}
+    public CommentItem() {
+        mAuthorName = "Nobody";
+    }
 
     public CommentItem(String id, String authorId, String authorName, String dateCreated, String iconServerId, String iconFarmId, String msg) {
         mId = id;
