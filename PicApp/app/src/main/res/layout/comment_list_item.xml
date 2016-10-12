@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingEnd="@dimen/activity_horizontal_margin">
 
-    <ImageView
+    <com.gemapps.picapp.ui.widget.CircularImageView
         android:id="@+id/user_icon_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
