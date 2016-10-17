@@ -19,6 +19,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:src="@drawable/ic_buddy"
         android:padding="4dp"/>
 
     <TextView

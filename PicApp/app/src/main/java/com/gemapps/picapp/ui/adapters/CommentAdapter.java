@@ -52,6 +52,7 @@ public class CommentAdapter extends BaseCommentAdapter {
         Picasso.with(mContext)
                 .load(item.getIconUrl())
                 .error(R.drawable.ic_buddy)
+                .placeholder(R.drawable.ic_buddy)
                 .transform(new CircleTransform())
                 .into(cHolder.mUserIcon);
     }

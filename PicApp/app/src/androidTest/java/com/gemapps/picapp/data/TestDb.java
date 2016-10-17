@@ -38,7 +38,82 @@ public class TestDb {
     }
 
     @Test
+    public void testUserTable(){
+        UserItem userItem = getUserItem();
+
+        assertNotNull(userItem);
+
+        PicSqlHelper helper = new PicSqlHelper(getContext());
+        SQLiteDatabase insertDb = helper.getWritableDatabase();
+
+        ContentValues contentValues = PicappContract.UserEntry.parse(userItem);
+
+        long id = insertDb.insert(PicappContract.UserEntry.TABLE_NAME, null, contentValues);
+
+        assertNotEquals(-1, id);
+
+        SQLiteDatabase readDb = helper.getReadableDatabase();
+
+        Cursor cursor = readDb.query(PicappContract.UserEntry.TABLE_NAME,
+                null,
+                PicappContract.UserEntry._ID + "= ?",
+                new String[]{String.valueOf(id)},
+                null, null, null);
+
+        assertNotNull(cursor);
+
+        cursor.moveToFirst();
+        String userId = cursor.getString(cursor.getColumnIndex(PicappContract.UserEntry.COLUMN_USER_ID));
+        String userNsid = cursor.getString(cursor.getColumnIndex(PicappContract.UserEntry.COLUMN_USER_NSID));
+
+        assertEquals(userItem.getId(), userId);
+        assertEquals(userItem.getNsid(), userNsid);
+
+        cursor.close();
+        insertDb.close();
+        readDb.close();
+    }
+
+    @Test
     public void testPublicationTable(){
+        PicItem picItem = getPicItem();
+
+        assertNotNull(picItem);
+
+        PicSqlHelper helper = new PicSqlHelper(getContext());
+        SQLiteDatabase insertDb = helper.getWritableDatabase();
+
+        ContentValues contentValues = PicappContract.PublicationEntry.parse(picItem);
+
+        long id = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME, null, contentValues);
+
+        assertNotEquals(-1, id);
+
+        SQLiteDatabase readDb = helper.getReadableDatabase();
+
+        Cursor cursor = readDb.query(PicappContract.PublicationEntry.TABLE_NAME,
+                null,
+                PicappContract.PublicationEntry._ID + "= ?",
+                new String[]{String.valueOf(id)},
+                null, null, null);
+
+        assertNotNull(cursor);
+
+        cursor.moveToFirst();
+
+        String ownerId = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_OWNER_ID));
+        String picId = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_PIC_ID));
+
+        assertEquals(picItem.getOwnerId(), ownerId);
+        assertEquals(picItem.getPicId(), picId);
+
+        cursor.close();
+        insertDb.close();
+        readDb.close();
+    }
+
+    @Test
+    public void testBookmarkTable(){
 
         PicItem picItem = getPicItem();
         UserItem userItem = getUserItem();
@@ -46,15 +121,20 @@ public class TestDb {
         assertNotNull(picItem);
         assertNotNull(userItem);
 
-        PicSqlHelper helper = new PicSqlHelper(InstrumentationRegistry.getTargetContext());
+        PicSqlHelper helper = new PicSqlHelper(getContext());
         SQLiteDatabase insertDb = helper.getWritableDatabase();
 
-        ContentValues contentValues = PicappContract.BookmarkEntry.parse(picItem, userItem);
+        ContentValues uContentValues = PicappContract.UserEntry.parse(userItem);
+        ContentValues pContentValues = PicappContract.PublicationEntry.parse(picItem);
+
+        long userId = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME, null, uContentValues);
+        long pubId = insertDb.insert(PicappContract.UserEntry.TABLE_NAME, null, pContentValues);
+
+        ContentValues contentValues = PicappContract.BookmarkEntry.parse(pubId, userId);
 
         long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
 
         assertNotEquals(-1, id);
-
 
         SQLiteDatabase readDb = helper.getReadableDatabase();
 
@@ -67,11 +147,11 @@ public class TestDb {
         assertNotNull(cursor);
 
         cursor.moveToFirst();
-        String ownerName = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NAME));
-        String nsid = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NSID));
+        int pId = cursor.getInt(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID));
+        int uId = cursor.getInt(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_USER_ID));
 
-        assertEquals(ownerName, picItem.getOwnerName());
-        assertEquals(nsid, userItem.getNsid());
+        assertEquals(pubId, pId);
+        assertEquals(userId, uId);
 
         cursor.close();
         insertDb.close();
@@ -79,7 +159,7 @@ public class TestDb {
     }
 
     private Context getContext(){
-        return InstrumentationRegistry.getContext();
+        return InstrumentationRegistry.getTargetContext();
     }
 
     private PicItem getPicItem(){

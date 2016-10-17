@@ -54,8 +54,6 @@ public class PicItem implements Parcelable {
         mSecretId = secretId;
     }
 
-
-
     public String getBigPicUrl(){
         return FlickrPhotosClient.buildPhotoUrl(mFarm, mServerId, mPicId, mSecretId, "c");
     }
