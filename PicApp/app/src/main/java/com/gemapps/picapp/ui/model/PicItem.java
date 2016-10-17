@@ -18,7 +18,7 @@ public class PicItem implements Parcelable {
     @SerializedName("url_n") private String mPicUrl;
     @SerializedName("count_faves") private String mFaves;
     @SerializedName("count_comments") private String mComments;
-    @SerializedName("date_taken") private String mPicDateTaken;
+    @SerializedName("datetaken") private String mPicDateTaken;
 
     @SerializedName("id") private String mPicId;
     @SerializedName("farm") private String mFarm;

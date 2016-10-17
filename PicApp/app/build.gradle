@@ -9,7 +9,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 24010107
-        versionName "1.1.7"
+        versionName "1.1.1"
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "FLICKR_API_KEY", FLICKR_API_KEY
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

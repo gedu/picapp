@@ -166,8 +166,24 @@ public class TestDb {
 
         final String picResponse = "{ \"photos\": { \"page\": 1, \"pages\": \"1000\", \"perpage\": 1, \"total\": \"1000\", \n" +
                 "    \"photo\": [\n" +
-                "      { \"id\": \"30135992985\", \"owner\": \"147769095@N04\", \"secret\": \"1f0dcd9f79\", \"server\": \"5590\", \"farm\": 6, \"title\": \"20150827_225851844_iOS.jpg\", \"ispublic\": 1, \"isfriend\": 0, \"isfamily\": 0, \"license\": 0, \n" +
-                "        \"description\": { \"_content\": \"\" }, \"dateupload\": \"1475689285\", \"lastupdate\": \"1475689288\", \"datetaken\": \"2015-08-27 18:58:51\", \"datetakengranularity\": 0, \"datetakenunknown\": 0, \"ownername\": \"stanley882@ymail.com\", \"iconserver\": 0, \"iconfarm\": 0, \"views\": 0, \"tags\": \"\", \"machine_tags\": \"\", \"originalsecret\": \"26922c3a98\", \"originalformat\": \"jpg\", \"latitude\": 0, \"longitude\": 0, \"accuracy\": 0, \"context\": 0, \"media\": \"photo\", \"media_status\": \"ready\", \"url_sq\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_s.jpg\", \"height_sq\": 75, \"width_sq\": 75, \"url_t\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_t.jpg\", \"height_t\": 100, \"width_t\": 75, \"url_s\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_m.jpg\", \"height_s\": \"240\", \"width_s\": \"180\", \"url_q\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_q.jpg\", \"height_q\": \"150\", \"width_q\": \"150\", \"url_m\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79.jpg\", \"height_m\": \"500\", \"width_m\": \"375\", \"url_n\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_n.jpg\", \"height_n\": \"320\", \"width_n\": \"240\", \"url_z\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_z.jpg\", \"height_z\": \"640\", \"width_z\": \"480\", \"url_c\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_c.jpg\", \"height_c\": \"800\", \"width_c\": \"600\", \"url_l\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_b.jpg\", \"height_l\": \"1024\", \"width_l\": \"768\", \"url_o\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_26922c3a98_o.jpg\", \"height_o\": \"2448\", \"width_o\": \"3264\", \"pathalias\": \"\" }\n" +
+                "      { \"id\": \"30135992985\", \"owner\": \"147769095@N04\", \"secret\": \"1f0dcd9f79\"," +
+                " \"count_faves\": \"559\", \"count_comments\": 6, \"server\": \"5590\", \"farm\": 6, \"title\": \"20150827_225851844_iOS.jpg\", \"ispublic\": 1," +
+                " \"isfriend\": 0, \"isfamily\": 0, \"license\": 0, \n" +
+                "        \"description\": { \"_content\": \"\" }, \"dateupload\": \"1475689285\", \"lastupdate\": \"1475689288\", " +
+                "\"datetaken\": \"2015-08-27 18:58:51\", \"datetakengranularity\": 0, \"datetakenunknown\": 0, " +
+                "\"ownername\": \"stanley882@ymail.com\", \"iconserver\": 0, \"iconfarm\": 0, \"views\": 0, \"tags\": \"\", \"machine_tags\": \"\", " +
+                "\"originalsecret\": \"26922c3a98\", \"originalformat\": \"jpg\", \"latitude\": 0, \"longitude\": 0, \"accuracy\": 0, \"context\": 0," +
+                " \"media\": \"photo\", \"media_status\": \"ready\", \"url_sq\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_s.jpg\", " +
+                "\"height_sq\": 75, \"width_sq\": 75, \"url_t\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_t.jpg\"," +
+                " \"height_t\": 100, \"width_t\": 75, \"url_s\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_m.jpg\", " +
+                "\"height_s\": \"240\", \"width_s\": \"180\", \"url_q\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_q.jpg\", " +
+                "\"height_q\": \"150\", \"width_q\": \"150\", \"url_m\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79.jpg\", " +
+                "\"height_m\": \"500\", \"width_m\": \"375\", \"url_n\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_n.jpg\"," +
+                " \"height_n\": \"320\", \"width_n\": \"240\", \"url_z\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_z.jpg\"," +
+                " \"height_z\": \"640\", \"width_z\": \"480\", \"url_c\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_c.jpg\", " +
+                "\"height_c\": \"800\", \"width_c\": \"600\", \"url_l\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_1f0dcd9f79_b.jpg\", " +
+                "\"height_l\": \"1024\", \"width_l\": \"768\", \"url_o\": \"https:\\/\\/farm6.staticflickr.com\\/5590\\/30135992985_26922c3a98_o.jpg\", " +
+                "\"height_o\": \"2448\", \"width_o\": \"3264\", \"pathalias\": \"\" }\n" +
                 "    ] }, \"stat\": \"ok\" }";
 
         try {

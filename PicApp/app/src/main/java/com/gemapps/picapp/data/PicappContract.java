@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
@@ -13,7 +14,7 @@ import com.gemapps.picapp.ui.model.UserItem;
  */
 
 public class PicappContract  {
-
+    private static final String TAG = "PicappContract";
     public static final String CONTENT_AUTHORITY = "com.gemapps.picapp.data";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -118,7 +119,7 @@ public class PicappContract  {
             contentValues.put(COLUMN_FARM_ID, picItem.getFarm());
             contentValues.put(COLUMN_SERVER_ID, picItem.getServerId());
             contentValues.put(COLUMN_SECRET_ID, picItem.getSecretId());
-
+            Log.d(TAG, "parse: "+contentValues);
             return contentValues;
         }
     }
@@ -141,7 +142,14 @@ public class PicappContract  {
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 COLUMN_PUBLICATION_ID + " INTEGER NOT NULL, " +
-                COLUMN_USER_ID + " INTEGER NOT NULL);";
+                COLUMN_USER_ID + " INTEGER NOT NULL," +
+
+                " FOREIGN KEY (" + COLUMN_USER_ID + ") REFERENCES " +
+                UserEntry.TABLE_NAME + " (" + UserEntry._ID + "), " +
+
+                " FOREIGN KEY (" + COLUMN_PUBLICATION_ID + ") REFERENCES " +
+                PublicationEntry.TABLE_NAME + " (" + PublicationEntry._ID + ") " +
+                ");";
 
         public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 

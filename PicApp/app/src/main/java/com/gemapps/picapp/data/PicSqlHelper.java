@@ -21,12 +21,18 @@ public class PicSqlHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        db.execSQL(PicappContract.UserEntry.SQL_CREATE_TABLE);
+        db.execSQL(PicappContract.PublicationEntry.SQL_CREATE_TABLE);
         db.execSQL(PicappContract.BookmarkEntry.SQL_CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        //this should be backwards compatible, but cos the previous version was just for test and fast
+        //I will manage this way now
+        db.execSQL(PicappContract.UserEntry.SQL_DROP_TABLE);
+        db.execSQL(PicappContract.PublicationEntry.SQL_DROP_TABLE);
         db.execSQL(PicappContract.BookmarkEntry.SQL_DROP_TABLE);
         onCreate(db);
     }

@@ -11,9 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gemapps.picapp.R;
-import com.gemapps.picapp.data.PicappContract;
-import com.gemapps.picapp.helper.CircleTransform;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,19 +37,19 @@ public class BookmarkCursorLoader extends CursorAdapter {
 
         BookmarkViewHolder holder = new BookmarkViewHolder(view);
 
-        holder.mPicTitle.setText(cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_PIC_TITLE)));
-        holder.mUserName.setText(cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NAME)));
-
-        String picUrl = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_PIC_URL));
-//        String iconFarm = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_ICON_FARM_ID));
-//        String iconServer = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_ICON_SERVER_ID));
-//        String nsid = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NSID));
-
-        Picasso.with(context)
-                .load(picUrl)
-                .placeholder(R.drawable.ic_buddy)
-                .transform(new CircleTransform())
-                .into(holder.mIconImage);
+//        holder.mPicTitle.setText(cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_PIC_TITLE)));
+//        holder.mUserName.setText(cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NAME)));
+//
+//        String picUrl = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_PIC_URL));
+////        String iconFarm = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_ICON_FARM_ID));
+////        String iconServer = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_ICON_SERVER_ID));
+////        String nsid = cursor.getString(cursor.getColumnIndex(PicappContract.BookmarkEntry.COLUMN_OWNER_NSID));
+//
+//        Picasso.with(context)
+//                .load(picUrl)
+//                .placeholder(R.drawable.ic_buddy)
+//                .transform(new CircleTransform())
+//                .into(holder.mIconImage);
     }
 
     public class BookmarkViewHolder {
