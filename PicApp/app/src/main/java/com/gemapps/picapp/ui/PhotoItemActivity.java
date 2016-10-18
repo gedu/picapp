@@ -1,16 +1,23 @@
 package com.gemapps.picapp.ui;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.gemapps.picapp.R;
+import com.gemapps.picapp.data.PicSqlHelper;
+import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.networking.FlickerUserClient;
 import com.gemapps.picapp.networking.FlickrCommentsClient;
 import com.gemapps.picapp.ui.adapters.BaseCommentAdapter;
@@ -149,19 +156,23 @@ public class PhotoItemActivity extends BaseActivity {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-//                PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
-//                SQLiteDatabase removeDb = helper.getWritableDatabase();
+                PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
+                SQLiteDatabase removeDb = helper.getWritableDatabase();
+                SQLiteDatabase readDb = helper.getReadableDatabase();
 
-//                int count = removeDb.delete(PicappContract.BookmarkEntry.TABLE_NAME,
-//                        PicappContract.BookmarkEntry.COLUMN_UNIQUE_ID + "= ?",
-//                        new String[]{PicappContract.BookmarkEntry.buildUserUniqueId(mUserItem)});
+                long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
 
-//                if(count > 0){
-//                    mInBookmark = false;
-//                    updateBookmarkState();
-//                    Snackbar.make(mCoordinatorLayout, R.string.deleted, Snackbar.LENGTH_SHORT).show();
-//                }
-//                removeDb.close();
+                int count = removeDb.delete(PicappContract.UserEntry.TABLE_NAME,
+                        PicappContract.UserEntry._ID + "= ?",
+                        new String[]{String.valueOf(userId)});
+
+                if(count > 0){
+                    mInBookmark = false;
+                    updateBookmarkState();
+                    Snackbar.make(mCoordinatorLayout, R.string.deleted, Snackbar.LENGTH_SHORT).show();
+                }
+                readDb.close();
+                removeDb.close();
             }
         });
     }
@@ -172,47 +183,63 @@ public class PhotoItemActivity extends BaseActivity {
             @Override
             public void run() {
 
-//                PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
-//                SQLiteDatabase insertDb = helper.getWritableDatabase();
-//
-//                ContentValues contentValues = PicappContract.BookmarkEntry.parse(mPicItem, mUserItem);
-//
-//                long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
-//
-//                if(id != -1){
-//                    mInBookmark = true;
-//                    Snackbar.make(mCoordinatorLayout, R.string.saved, Snackbar.LENGTH_SHORT).show();
-//                }else{
-//                    mInBookmark = false;
-//                    Snackbar.make(mCoordinatorLayout, R.string.saved_error_text, Snackbar.LENGTH_SHORT)
-//                            .setAction(R.string.try_again, new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    addPhotoInBookmark();
-//                                }
-//                            }).show();
-//                }
-//                updateBookmarkState();
-//                insertDb.close();
+                PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
+                SQLiteDatabase insertDb = helper.getWritableDatabase();
+
+                ContentValues uContentValues = PicappContract.UserEntry.parse(mUserItem);
+                ContentValues pContentValues = PicappContract.PublicationEntry.parse(mPicItem);
+
+                //Save the user
+                long userId = insertDb.insert(PicappContract.UserEntry.TABLE_NAME,
+                        null, uContentValues);
+                //Save the publication
+                long pubId = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME,
+                        null, pContentValues);
+                //Save in the bookmark
+                long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME,
+                        null,
+                        PicappContract.BookmarkEntry.parse(userId, pubId));
+
+                if(id != -1){
+                    mInBookmark = true;
+                    Snackbar.make(mCoordinatorLayout, R.string.saved, Snackbar.LENGTH_SHORT).show();
+                }else{
+                    mInBookmark = false;
+                    Snackbar.make(mCoordinatorLayout, R.string.saved_error_text, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.try_again, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    addPhotoInBookmark();
+                                }
+                            }).show();
+                }
+
+                updateBookmarkState();
+                insertDb.close();
             }
         });
     }
 
     private boolean existInDb(){
-//        PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
-//        SQLiteDatabase readDb = helper.getReadableDatabase();
-//
-//        Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
-//                null,
-//                PicappContract.BookmarkEntry.COLUMN_UNIQUE_ID + "= ?",
-//                new String[]{PicappContract.BookmarkEntry.buildUserUniqueId(mUserItem)},
-//                null, null, null);
-//
-//        boolean exist = cursor != null && cursor.getCount() > 0;
-//
-//        if(cursor != null) cursor.close();
-//        readDb.close();
-        return false;
+        PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
+        SQLiteDatabase readDb = helper.getReadableDatabase();
+
+        long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
+        long pubId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, mPicItem);
+
+        Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
+                null,
+                PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND "+
+                        PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID+"= ?",
+                new String[]{String.valueOf(userId), String.valueOf(pubId)},
+                null, null, null);
+
+        boolean exist = cursor != null && cursor.getCount() > 0;
+
+        if(cursor != null) cursor.close();
+        readDb.close();
+
+        return exist;
     }
 
     private RecyclerView.Adapter<RecyclerView.ViewHolder> getLoadingAdapter(){

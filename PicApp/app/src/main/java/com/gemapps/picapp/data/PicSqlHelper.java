@@ -12,7 +12,7 @@ public class PicSqlHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
 
-    private static final String DATABASE_NAME = "gempicapp.db";
+    public static final String DATABASE_NAME = "gempicapp.db";
 
     public PicSqlHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,5 +35,17 @@ public class PicSqlHelper extends SQLiteOpenHelper {
         db.execSQL(PicappContract.PublicationEntry.SQL_DROP_TABLE);
         db.execSQL(PicappContract.BookmarkEntry.SQL_DROP_TABLE);
         onCreate(db);
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        db.setForeignKeyConstraintsEnabled(true);
+        super.onConfigure(db);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        db.setForeignKeyConstraintsEnabled(true);
+        super.onOpen(db);
     }
 }

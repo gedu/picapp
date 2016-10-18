@@ -2,9 +2,10 @@ package com.gemapps.picapp.data;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
@@ -59,6 +60,20 @@ public class PicappContract  {
             contentValues.put(COLUMN_ICON_SERVER, userItem.getIconServerId());
 
             return contentValues;
+        }
+
+        public static long getUserDbId(SQLiteDatabase db, UserItem userItem){
+            Cursor cursor = db.query(UserEntry.TABLE_NAME, new String[]{UserEntry._ID, UserEntry.COLUMN_USER_ID},
+                    UserEntry.COLUMN_USER_ID+"= ?", new String[]{userItem.getId()}, null, null, null);
+
+            if(cursor == null) return -1;
+
+            cursor.moveToFirst();
+
+            long dbId = cursor.getLong(cursor.getColumnIndex(UserEntry._ID));
+            cursor.close();
+
+            return dbId;
         }
     }
 
@@ -119,8 +134,22 @@ public class PicappContract  {
             contentValues.put(COLUMN_FARM_ID, picItem.getFarm());
             contentValues.put(COLUMN_SERVER_ID, picItem.getServerId());
             contentValues.put(COLUMN_SECRET_ID, picItem.getSecretId());
-            Log.d(TAG, "parse: "+contentValues);
+
             return contentValues;
+        }
+
+        public static long buildPublicationUniqueId(SQLiteDatabase db, PicItem picItem){
+            Cursor cursor = db.query(PublicationEntry.TABLE_NAME, new String[]{PublicationEntry._ID, PublicationEntry.COLUMN_PIC_ID},
+                    PublicationEntry.COLUMN_PIC_ID+"= ?", new String[]{picItem.getPicId()}, null, null, null);
+
+            if(cursor == null) return -1;
+
+            cursor.moveToFirst();
+
+            long dbId = cursor.getLong(cursor.getColumnIndex(PublicationEntry._ID));
+            cursor.close();
+
+            return dbId;
         }
     }
 
@@ -135,7 +164,7 @@ public class PicappContract  {
         public static final String TABLE_NAME = "bookmark";
 
         public static final String COLUMN_PUBLICATION_ID = "publication_id";
-        public static final String COLUMN_USER_ID = "owner_nsid";
+        public static final String COLUMN_USER_ID = "user_id";
 
         public static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
 
@@ -145,15 +174,15 @@ public class PicappContract  {
                 COLUMN_USER_ID + " INTEGER NOT NULL," +
 
                 " FOREIGN KEY (" + COLUMN_USER_ID + ") REFERENCES " +
-                UserEntry.TABLE_NAME + " (" + UserEntry._ID + "), " +
+                UserEntry.TABLE_NAME + " (" + UserEntry._ID + ") ON DELETE CASCADE, " +
 
                 " FOREIGN KEY (" + COLUMN_PUBLICATION_ID + ") REFERENCES " +
-                PublicationEntry.TABLE_NAME + " (" + PublicationEntry._ID + ") " +
+                PublicationEntry.TABLE_NAME + " (" + PublicationEntry._ID + ") ON DELETE CASCADE" +
                 ");";
 
         public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public static ContentValues parse(long pubId, long userId){
+        public static ContentValues parse(long userId, long pubId){
 
             ContentValues contentValues = new ContentValues();
 
@@ -163,9 +192,9 @@ public class PicappContract  {
             return contentValues;
         }
 
-        public static String buildUserUniqueId(UserItem userItem){
-            return userItem.getIconFarmId()+userItem.getIconServerId()+userItem.getNsid();
-        }
+
+
+
     }
 
 }

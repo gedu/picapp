@@ -20,12 +20,15 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by edu on 10/5/16.
  */
 @RunWith(AndroidJUnit4.class)
 public class TestDb {
+
+    private static final String TAG = "TestDb";
 
     @Before
     public void setup(){
@@ -34,7 +37,8 @@ public class TestDb {
     }
 
     private void deleteDatabase(){
-        InstrumentationRegistry.getContext().deleteDatabase(PicappContract.BookmarkEntry.TABLE_NAME);
+
+        getContext().deleteDatabase(PicSqlHelper.DATABASE_NAME);
     }
 
     @Test
@@ -127,10 +131,10 @@ public class TestDb {
         ContentValues uContentValues = PicappContract.UserEntry.parse(userItem);
         ContentValues pContentValues = PicappContract.PublicationEntry.parse(picItem);
 
-        long userId = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME, null, uContentValues);
-        long pubId = insertDb.insert(PicappContract.UserEntry.TABLE_NAME, null, pContentValues);
+        long userId = insertDb.insert(PicappContract.UserEntry.TABLE_NAME, null, uContentValues);
+        long pubId = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME, null, pContentValues);
 
-        ContentValues contentValues = PicappContract.BookmarkEntry.parse(pubId, userId);
+        ContentValues contentValues = PicappContract.BookmarkEntry.parse(userId, pubId);
 
         long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
 
@@ -156,6 +160,95 @@ public class TestDb {
         cursor.close();
         insertDb.close();
         readDb.close();
+    }
+
+    @Test
+    public void testBookmarkExist(){
+
+        PicItem picItem = getPicItem();
+        UserItem userItem = getUserItem();
+
+        assertNotNull(picItem);
+        assertNotNull(userItem);
+
+        PicSqlHelper helper = new PicSqlHelper(getContext());
+        SQLiteDatabase insertDb = helper.getWritableDatabase();
+
+        ContentValues uContentValues = PicappContract.UserEntry.parse(userItem);
+        ContentValues pContentValues = PicappContract.PublicationEntry.parse(picItem);
+
+        long userId = insertDb.insert(PicappContract.UserEntry.TABLE_NAME, null, uContentValues);
+        long pubId = insertDb.insert(PicappContract.PublicationEntry.TABLE_NAME, null, pContentValues);
+
+        ContentValues contentValues = PicappContract.BookmarkEntry.parse(userId, pubId);
+
+        long id = insertDb.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
+
+        assertNotEquals(-1, id);
+
+        SQLiteDatabase readDb = helper.getReadableDatabase();
+
+        long userDbId = PicappContract.UserEntry.getUserDbId(readDb, userItem);
+        long pubDbId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, picItem);
+
+        Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
+                null,
+                PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND "+
+                        PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID+"= ?",
+                new String[]{String.valueOf(userDbId), String.valueOf(pubDbId)},
+                null, null, null);
+
+        boolean exist = cursor != null && cursor.getCount() > 0;
+
+        assertTrue(exist);
+
+        cursor.close();
+        insertDb.close();
+        readDb.close();
+    }
+
+    @Test
+    public void deleteBookmarkItem(){
+        PicItem picItem = getPicItem();
+        UserItem userItem = getUserItem();
+
+        assertNotNull(picItem);
+        assertNotNull(userItem);
+
+        PicSqlHelper helper = new PicSqlHelper(getContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues uContentValues = PicappContract.UserEntry.parse(userItem);
+        ContentValues pContentValues = PicappContract.PublicationEntry.parse(picItem);
+
+        long userId = db.insert(PicappContract.UserEntry.TABLE_NAME, null, uContentValues);
+        long pubId = db.insert(PicappContract.PublicationEntry.TABLE_NAME, null, pContentValues);
+
+        ContentValues contentValues = PicappContract.BookmarkEntry.parse(userId, pubId);
+
+        long id = db.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
+
+        assertNotEquals(-1, id);
+
+        int uCount = db.delete(PicappContract.UserEntry.TABLE_NAME,
+                PicappContract.UserEntry._ID + "= ?",
+                new String[]{String.valueOf(userId)});
+
+        int bCount = db.delete(PicappContract.BookmarkEntry.TABLE_NAME,
+                PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND " +
+                        PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID + "= ?",
+                new String[]{String.valueOf(userId), String.valueOf(pubId)});
+
+        int pCount = db.delete(PicappContract.UserEntry.TABLE_NAME,
+                PicappContract.PublicationEntry._ID + "= ?",
+                new String[]{String.valueOf(pubId)});
+
+        //Deletion will cascade so deleting the user will do the same with the others tables
+        assertEquals(1, uCount);
+        assertEquals(0, bCount);
+        assertEquals(0, pCount);
+
+        db.close();
     }
 
     private Context getContext(){
