@@ -30,7 +30,7 @@ public class PicappContract  {
             PublicationEntry._ID_AS, PublicationEntry.COLUMN_OWNER_NAME, PublicationEntry.COLUMN_URL_N,
             PublicationEntry.COLUMN_COUNT_FAVES, PublicationEntry.COLUMN_COUNT_COMMENTS, PublicationEntry.COLUMN_DATE_TAKEN,
             PublicationEntry.COLUMN_PIC_ID, PublicationEntry.COLUMN_FARM_ID, PublicationEntry.COLUMN_SERVER_ID,
-            PublicationEntry.COLUMN_SECRET_ID
+            PublicationEntry.COLUMN_SECRET_ID, BookmarkEntry.TN_ID
     };
 
     public static final class UserEntry implements BaseColumns {
@@ -79,7 +79,7 @@ public class PicappContract  {
             Cursor cursor = db.query(UserEntry.TABLE_NAME, new String[]{UserEntry._ID, UserEntry.COLUMN_USER_ID},
                     UserEntry.COLUMN_USER_ID+"= ?", new String[]{userItem.getId()}, null, null, null);
 
-            if(cursor == null) return -1;
+            if(cursor == null || cursor.getCount() == 0) return -1;
 
             cursor.moveToFirst();
 
@@ -159,7 +159,7 @@ public class PicappContract  {
             Cursor cursor = db.query(PublicationEntry.TABLE_NAME, new String[]{PublicationEntry._ID, PublicationEntry.COLUMN_PIC_ID},
                     PublicationEntry.COLUMN_PIC_ID+"= ?", new String[]{picItem.getPicId()}, null, null, null);
 
-            if(cursor == null) return -1;
+            if(cursor == null || cursor.getCount() == 0) return -1;
 
             cursor.moveToFirst();
 
@@ -183,6 +183,7 @@ public class PicappContract  {
         public static final String COLUMN_PUBLICATION_ID = "publication_db_id";
         public static final String COLUMN_USER_ID = "user_db_id";
 
+        public static final String TN_ID = TABLE_NAME + "." + _ID;
         public static final String TN_USER_ID = TABLE_NAME + "." + COLUMN_USER_ID;
         public static final String TN_PUBLICATION_ID = TABLE_NAME + "." + COLUMN_PUBLICATION_ID;
 

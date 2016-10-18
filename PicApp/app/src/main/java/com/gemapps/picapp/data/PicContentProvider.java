@@ -61,9 +61,9 @@ public class PicContentProvider extends ContentProvider {
         switch (mUriMatcher.match(uri)){
             case BOOKMARK:
 
-                cursor = mOpenHelper.getReadableDatabase()
-                        .query(PicappContract.BookmarkEntry.TABLE_NAME,
+                cursor = BOOKMARK_QUERY_BUILDER.query(mOpenHelper.getReadableDatabase(),
                         projection, selection, selectionArgs, null, null, sortOrder);
+
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

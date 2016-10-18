@@ -53,7 +53,7 @@ public class BookmarkActivity extends BaseActivity
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         return new CursorLoader(this, PicappContract.BookmarkEntry.CONTENT_URI,
-                null, null, null, null);
+                PicappContract.PROJECTION_BOOKMARK_ALL, null, null, null);
     }
 
     @Override

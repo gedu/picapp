@@ -227,6 +227,8 @@ public class PhotoItemActivity extends BaseActivity {
         long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
         long pubId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, mPicItem);
 
+        if(userId == -1 || pubId == -1) return false;
+
         Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
                 null,
                 PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND "+
