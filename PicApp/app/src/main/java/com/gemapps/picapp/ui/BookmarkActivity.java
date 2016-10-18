@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.ListView;
 
 import com.gemapps.picapp.R;
@@ -25,6 +26,7 @@ public class BookmarkActivity extends BaseActivity
 
     private static final String TAG = "BookmarkActivity";
     @BindView(R.id.list_view) ListView mListView;
+    @BindView(R.id.empty_list_stub) ViewStub mEmptyView;
 
     private BookmarkCursorLoader mAdapter;
 
@@ -36,6 +38,7 @@ public class BookmarkActivity extends BaseActivity
 
         mAdapter = new BookmarkCursorLoader(this, this);
         mListView.setAdapter(mAdapter);
+        mListView.setEmptyView(mEmptyView);
 
         setUpButtonToolbar();
 
