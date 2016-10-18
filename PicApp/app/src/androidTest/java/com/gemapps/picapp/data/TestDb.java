@@ -208,7 +208,7 @@ public class TestDb {
     }
 
     @Test
-    public void deleteBookmarkItem(){
+    public void testDeleteBookmarkItem(){
         PicItem picItem = getPicItem();
         UserItem userItem = getUserItem();
 
@@ -249,6 +249,39 @@ public class TestDb {
         assertEquals(0, pCount);
 
         db.close();
+    }
+
+    @Test
+    public void testGetAllBookmarks(){
+        PicItem picItem = getPicItem();
+        UserItem userItem = getUserItem();
+
+        assertNotNull(picItem);
+        assertNotNull(userItem);
+
+        PicSqlHelper helper = new PicSqlHelper(getContext());
+        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase readDb = helper.getReadableDatabase();
+
+        ContentValues uContentValues = PicappContract.UserEntry.parse(userItem);
+        ContentValues pContentValues = PicappContract.PublicationEntry.parse(picItem);
+
+        long userId = db.insert(PicappContract.UserEntry.TABLE_NAME, null, uContentValues);
+        long pubId = db.insert(PicappContract.PublicationEntry.TABLE_NAME, null, pContentValues);
+
+        ContentValues contentValues = PicappContract.BookmarkEntry.parse(userId, pubId);
+
+        db.insert(PicappContract.BookmarkEntry.TABLE_NAME, null, contentValues);
+
+        Cursor cursor = PicContentProvider.BOOKMARK_QUERY_BUILDER.query(
+                readDb, PicappContract.PROJECTION_BOOKMARK_ALL, null, null, null, null, null);
+
+        assertNotNull(cursor);
+        assertTrue(cursor.getCount() > 0);
+
+        cursor.close();
+        db.close();
+        readDb.close();
     }
 
     private Context getContext(){

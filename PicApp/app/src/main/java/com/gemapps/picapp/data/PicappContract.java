@@ -24,6 +24,15 @@ public class PicappContract  {
     public static final String PATH_PUBLICATION = "publication";
     public static final String PATH_BOOKMARK = "bookmark";
 
+    public static final String[] PROJECTION_BOOKMARK_ALL = new String[]{
+    UserEntry._ID_AS, UserEntry.COLUMN_USER_ID, UserEntry.COLUMN_USER_NSID, UserEntry.COLUMN_ICON_SERVER,
+            UserEntry.COLUMN_ICON_FARM_ID, PublicationEntry.COLUMN_TITLE, PublicationEntry.COLUMN_OWNER_ID,
+            PublicationEntry._ID_AS, PublicationEntry.COLUMN_OWNER_NAME, PublicationEntry.COLUMN_URL_N,
+            PublicationEntry.COLUMN_COUNT_FAVES, PublicationEntry.COLUMN_COUNT_COMMENTS, PublicationEntry.COLUMN_DATE_TAKEN,
+            PublicationEntry.COLUMN_PIC_ID, PublicationEntry.COLUMN_FARM_ID, PublicationEntry.COLUMN_SERVER_ID,
+            PublicationEntry.COLUMN_SECRET_ID
+    };
+
     public static final class UserEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
@@ -34,10 +43,14 @@ public class PicappContract  {
 
         public static final String TABLE_NAME = "user";
 
+        public static final String SHORT_USER_ID = "u_id";
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_USER_NSID = "user_nsid";
         public static final String COLUMN_ICON_SERVER = "icon_server";
         public static final String COLUMN_ICON_FARM_ID = "icon_farm";
+
+        public static final String TN_ID = TABLE_NAME + "." + _ID;
+        public static final String _ID_AS = TN_ID + " AS " + SHORT_USER_ID;
 
         public static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
 
@@ -87,6 +100,7 @@ public class PicappContract  {
 
         public static final String TABLE_NAME = "publication";
 
+        public static final String SHORT_PUB_ID = "p_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_OWNER_ID = "owner_id";
         public static final String COLUMN_OWNER_NAME = "owner_name";
@@ -98,6 +112,9 @@ public class PicappContract  {
         public static final String COLUMN_FARM_ID = "farm_id";
         public static final String COLUMN_SERVER_ID = "server_id";
         public static final String COLUMN_SECRET_ID = "secret_id";
+
+        public static final String TN_ID = TABLE_NAME + "." + _ID;
+        public static final String _ID_AS = TN_ID + " AS " + SHORT_PUB_ID;
 
         public static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
 
@@ -163,8 +180,11 @@ public class PicappContract  {
 
         public static final String TABLE_NAME = "bookmark";
 
-        public static final String COLUMN_PUBLICATION_ID = "publication_id";
-        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_PUBLICATION_ID = "publication_db_id";
+        public static final String COLUMN_USER_ID = "user_db_id";
+
+        public static final String TN_USER_ID = TABLE_NAME + "." + COLUMN_USER_ID;
+        public static final String TN_PUBLICATION_ID = TABLE_NAME + "." + COLUMN_PUBLICATION_ID;
 
         public static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
 

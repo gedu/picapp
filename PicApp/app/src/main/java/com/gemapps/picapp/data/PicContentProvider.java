@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
@@ -12,6 +13,25 @@ import android.support.annotation.Nullable;
  */
 
 public class PicContentProvider extends ContentProvider {
+
+    private static final String INNER_JOIN = " INNER JOIN ";
+    private static final String ON = " ON ";
+    public static final SQLiteQueryBuilder BOOKMARK_QUERY_BUILDER;
+    static {
+        BOOKMARK_QUERY_BUILDER = new SQLiteQueryBuilder();
+
+        BOOKMARK_QUERY_BUILDER.setTables(
+                PicappContract.UserEntry.TABLE_NAME + INNER_JOIN +
+                        PicappContract.BookmarkEntry.TABLE_NAME +
+                        ON + PicappContract.UserEntry.SHORT_USER_ID +
+                        " = " + PicappContract.BookmarkEntry.TN_USER_ID +
+                        INNER_JOIN +
+                        PicappContract.PublicationEntry.TABLE_NAME +
+                        ON + PicappContract.PublicationEntry.SHORT_PUB_ID +
+                        " = " + PicappContract.BookmarkEntry.TN_PUBLICATION_ID
+        );
+    }
+
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher mUriMatcher = buildUriMatcher();
