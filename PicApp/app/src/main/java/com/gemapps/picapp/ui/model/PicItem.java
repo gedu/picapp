@@ -1,8 +1,10 @@
 package com.gemapps.picapp.ui.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.networking.FlickrPhotosClient;
 import com.google.gson.annotations.SerializedName;
 
@@ -52,6 +54,21 @@ public class PicItem implements Parcelable {
         mFarm = farm;
         mServerId = serverId;
         mSecretId = secretId;
+    }
+
+    public PicItem(Cursor cursor){
+
+        mTitle = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_TITLE));
+        mOwnerId = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_OWNER_ID));
+        mOwnerName = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_OWNER_NAME));
+        mPicUrl = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_URL_N));
+        mFaves = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_COUNT_FAVES));
+        mComments = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_COUNT_COMMENTS));
+        mPicDateTaken = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_DATE_TAKEN));
+        mPicId = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_PIC_ID));
+        mFarm = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_FARM_ID));
+        mServerId = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_SERVER_ID));
+        mSecretId = cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_SECRET_ID));
     }
 
     public String getBigPicUrl(){

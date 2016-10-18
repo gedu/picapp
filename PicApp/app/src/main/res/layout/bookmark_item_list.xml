@@ -21,6 +21,7 @@
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:transitionName="pic_image"
             android:gravity="center"/>
 
         <LinearLayout

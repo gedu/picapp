@@ -1,12 +1,17 @@
 package com.gemapps.picapp.ui.model;
 
+import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.gemapps.picapp.data.PicappContract;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by edu on 10/5/16.
  * User model to be used by Gson
  */
-public class UserItem {
+public class UserItem implements Parcelable {
 
     /**
      * 1 iconFarm
@@ -21,11 +26,25 @@ public class UserItem {
     @SerializedName("iconserver") private String mIconServerId;
     @SerializedName("iconfarm") private String mIconFarmId;
 
+    public UserItem(Parcel in){
+        mId = in.readString();
+        mNsid = in.readString();
+        mIconServerId = in.readString();
+        mIconFarmId = in.readString();
+    }
+
     public UserItem(String id, String nsid, String iconServerId, String iconFarmId) {
         mId = id;
         mNsid = nsid;
         mIconServerId = iconServerId;
         mIconFarmId = iconFarmId;
+    }
+
+    public UserItem(Cursor cursor){
+        mId = cursor.getString(cursor.getColumnIndex(PicappContract.UserEntry.COLUMN_USER_ID));
+        mNsid = cursor.getString(cursor.getColumnIndex(PicappContract.UserEntry.COLUMN_USER_NSID));
+        mIconServerId = cursor.getString(cursor.getColumnIndex(PicappContract.UserEntry.COLUMN_ICON_SERVER));
+        mIconFarmId = cursor.getString(cursor.getColumnIndex(PicappContract.UserEntry.COLUMN_ICON_FARM_ID));
     }
 
     public String getIconUrl(){
@@ -67,4 +86,28 @@ public class UserItem {
     public void setIconFarmId(String iconFarmId) {
         mIconFarmId = iconFarmId;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(mId);
+        dest.writeString(mNsid);
+        dest.writeString(mIconServerId);
+        dest.writeString(mIconFarmId);
+    }
+
+    public static final Parcelable.Creator<UserItem> CREATOR = new Parcelable.Creator<UserItem>() {
+        public UserItem createFromParcel(Parcel in) {
+            return new UserItem(in);
+        }
+
+        public UserItem[] newArray(int size) {
+            return new UserItem[size];
+        }
+    };
 }

@@ -27,7 +27,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static com.gemapps.picapp.ui.PhotoItemActivity.ITEM_EXTRA_KEY;
+import static com.gemapps.picapp.ui.PhotoItemActivity.PIC_EXTRA_KEY;
 
 public class PhotoListActivity extends BaseActivity {
 
@@ -281,7 +281,7 @@ public class PhotoListActivity extends BaseActivity {
         @Override
         public void onClick(PicItem item, View title, View image) {
             Intent intent = new Intent(PhotoListActivity.this, PhotoItemActivity.class);
-            intent.putExtra(ITEM_EXTRA_KEY, item);
+            intent.putExtra(PIC_EXTRA_KEY, item);
 
             ActivityOptionsCompat options = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(PhotoListActivity.this, image, "pic_image");

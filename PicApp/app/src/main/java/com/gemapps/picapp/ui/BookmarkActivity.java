@@ -1,22 +1,27 @@
 package com.gemapps.picapp.ui;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.ui.adapters.BookmarkCursorLoader;
+import com.gemapps.picapp.ui.model.PicItem;
+import com.gemapps.picapp.ui.model.UserItem;
 
 import butterknife.BindView;
 
 public class BookmarkActivity extends BaseActivity
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, BookmarkCursorLoader.BookmarkListener {
 
     private static final String TAG = "BookmarkActivity";
     @BindView(R.id.list_view) ListView mListView;
@@ -29,7 +34,7 @@ public class BookmarkActivity extends BaseActivity
 
         setContentView(R.layout.activity_bookmark);
 
-        mAdapter = new BookmarkCursorLoader(this);
+        mAdapter = new BookmarkCursorLoader(this, this);
         mListView.setAdapter(mAdapter);
 
         setUpButtonToolbar();
@@ -65,5 +70,18 @@ public class BookmarkActivity extends BaseActivity
     public void onLoaderReset(Loader<Cursor> loader) {
 
         mAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onClicked(UserItem userItem, PicItem picItem, View imageView) {
+        Intent intent = new Intent(this, PhotoItemActivity.class);
+
+        intent.putExtra(PhotoItemActivity.PIC_EXTRA_KEY, picItem);
+        intent.putExtra(PhotoItemActivity.USER_EXTRA_KEY, userItem);
+
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this, imageView, "pic_image");
+
+        startActivity(intent, optionsCompat.toBundle());
     }
 }

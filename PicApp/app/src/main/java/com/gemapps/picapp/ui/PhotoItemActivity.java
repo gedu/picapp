@@ -36,7 +36,8 @@ import butterknife.BindView;
 public class PhotoItemActivity extends BaseActivity {
 
     private static final String TAG = "PhotoItemActivity";
-    public static final String ITEM_EXTRA_KEY = "picapp_item";
+    public static final String PIC_EXTRA_KEY = "picapp.picapp_item";
+    public static final String USER_EXTRA_KEY = "picapp.userapp_item";
 
     @BindView(R.id.activity_photo_item) CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -61,23 +62,30 @@ public class PhotoItemActivity extends BaseActivity {
 
         setUpButtonToolbar();
 
-        mPicItem = getIntent().getExtras().getParcelable(ITEM_EXTRA_KEY);
+        Bundle bundle = getIntent().getExtras();
+        mPicItem = bundle.getParcelable(PIC_EXTRA_KEY);
+
+        if (bundle.containsKey(USER_EXTRA_KEY)) {
+            mUserItem = bundle.getParcelable(USER_EXTRA_KEY);
+        }
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        if(mPicItem.getCommentAmount() > 0){
+        if (mPicItem.getCommentAmount() > 0) {
             loadComments();
-        }else {
+        } else {
             mRecyclerView.setAdapter(getNoCommentsAdapter());
         }
 
-        loadUserHeader();
+        if (mUserItem == null) loadUserHeaderAsync();
+        else mInBookmark = existInDb();
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         Picasso.with(this).load(mPicItem.getPicUrl()).into(mImageView);
     }
 
-    private void loadComments(){
+    private void loadComments() {
 
         mRecyclerView.setAdapter(getLoadingAdapter());
 
@@ -96,20 +104,19 @@ public class PhotoItemActivity extends BaseActivity {
         });
     }
 
-    private void loadUserHeader(){
+    private void loadUserHeaderAsync() {
+
         new FlickerUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickerUserClient.UserListener() {
             @Override
-            public void onFailure() {
-
-            }
+            public void onFailure() {}
 
             @Override
             public void onSuccess(UserItem userItem) {
 
                 mUserItem = userItem;
-                mBookmarkItem.setVisible(true);
                 mInBookmark = existInDb();
-                if(mBookmarkItem != null){
+                if (mBookmarkItem != null) {
+                    mBookmarkItem.setVisible(true);
                     updateBookmarkState();
                 }
 
@@ -123,22 +130,23 @@ public class PhotoItemActivity extends BaseActivity {
 
         getMenuInflater().inflate(R.menu.menu_photo_item, menu);
         mBookmarkItem = menu.getItem(0);
-        mBookmarkItem.setVisible(false);
+        mBookmarkItem.setVisible(mUserItem != null);
+        updateBookmarkState();
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 super.onBackPressed();
                 return true;
             case R.id.action_bookmark:
 
-                if (mInBookmark){
+                if (mInBookmark) {
                     removePhotoFromBookmark();
-                }else{
+                } else {
                     addPhotoInBookmark();
                 }
                 return true;
@@ -147,12 +155,12 @@ public class PhotoItemActivity extends BaseActivity {
         }
     }
 
-    private void updateBookmarkState(){
+    private void updateBookmarkState() {
         mBookmarkItem.setIcon(getResources().getDrawable(mInBookmark ?
                 R.drawable.ic_bookmark_white_24px : R.drawable.ic_bookmark_border_white_24px));
     }
 
-    private void removePhotoFromBookmark(){
+    private void removePhotoFromBookmark() {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -166,7 +174,7 @@ public class PhotoItemActivity extends BaseActivity {
                         PicappContract.UserEntry._ID + "= ?",
                         new String[]{String.valueOf(userId)});
 
-                if(count > 0){
+                if (count > 0) {
                     mInBookmark = false;
                     updateBookmarkState();
                     Snackbar.make(mCoordinatorLayout, R.string.deleted, Snackbar.LENGTH_SHORT).show();
@@ -177,7 +185,7 @@ public class PhotoItemActivity extends BaseActivity {
         });
     }
 
-    private void addPhotoInBookmark(){
+    private void addPhotoInBookmark() {
 
         mHandler.post(new Runnable() {
             @Override
@@ -200,10 +208,10 @@ public class PhotoItemActivity extends BaseActivity {
                         null,
                         PicappContract.BookmarkEntry.parse(userId, pubId));
 
-                if(id != -1){
+                if (id != -1) {
                     mInBookmark = true;
                     Snackbar.make(mCoordinatorLayout, R.string.saved, Snackbar.LENGTH_SHORT).show();
-                }else{
+                } else {
                     mInBookmark = false;
                     Snackbar.make(mCoordinatorLayout, R.string.saved_error_text, Snackbar.LENGTH_SHORT)
                             .setAction(R.string.try_again, new View.OnClickListener() {
@@ -220,36 +228,36 @@ public class PhotoItemActivity extends BaseActivity {
         });
     }
 
-    private boolean existInDb(){
+    private boolean existInDb() {
         PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
         SQLiteDatabase readDb = helper.getReadableDatabase();
 
         long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
         long pubId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, mPicItem);
 
-        if(userId == -1 || pubId == -1) return false;
+        if (userId == -1 || pubId == -1) return false;
 
         Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
                 null,
-                PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND "+
-                        PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID+"= ?",
+                PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND " +
+                        PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID + "= ?",
                 new String[]{String.valueOf(userId), String.valueOf(pubId)},
                 null, null, null);
 
         boolean exist = cursor != null && cursor.getCount() > 0;
 
-        if(cursor != null) cursor.close();
+        if (cursor != null) cursor.close();
         readDb.close();
 
         return exist;
     }
 
-    private RecyclerView.Adapter<RecyclerView.ViewHolder> getLoadingAdapter(){
+    private RecyclerView.Adapter<RecyclerView.ViewHolder> getLoadingAdapter() {
         mCommentAdapter = new LoadingCommentAdapter(new ArrayList<CommentItem>(), mPicItem, PhotoItemActivity.this);
         return mCommentAdapter;
     }
 
-    private RecyclerView.Adapter<RecyclerView.ViewHolder> getNoCommentsAdapter(){
+    private RecyclerView.Adapter<RecyclerView.ViewHolder> getNoCommentsAdapter() {
         mCommentAdapter = new NoCommentAdapter(new ArrayList<CommentItem>(), mPicItem, PhotoItemActivity.this);
         return mCommentAdapter;
     }
