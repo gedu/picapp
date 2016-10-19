@@ -10,4 +10,13 @@
     <style name="AppTheme.Translucent">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
+
+    <style name="TextAppearance.Comment" parent="TextAppearance.AppCompat">
+        <item name="android:letterSpacing">0.02</item>
+
+    </style>
+    <style name="TextAppearance.CommentTimestamp" parent="TextAppearance.AppCompat">
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
 </resources>

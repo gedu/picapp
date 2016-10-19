@@ -5,11 +5,17 @@
     <color name="colorAccent">#69F0AE</color>
     <color name="colorAccentDark">#48f19e</color>
 
-    <color name="image_bg_holder">#c9c9c9</color>
+    <color name="pic">#fff06292</color> <!-- 300 -->
+    <color name="pic_dark">#ec407a</color> <!-- 400 -->
+    <color name="pic_link_highlight">#b3f06292</color>
 
+    <color name="image_bg_holder">#c9c9c9</color>
+    <color name="text_primary_light">#ffffffff</color>
     <color name="bg_light_gray">#d6d6d6</color>
 
     <color name="dialog_background">#7f000000</color>
+    <color name="hint_disabled_dark">#43000000</color> <!-- 26% black -->
+    <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
 
     <color name="bg_canvas">#99323232</color>
 

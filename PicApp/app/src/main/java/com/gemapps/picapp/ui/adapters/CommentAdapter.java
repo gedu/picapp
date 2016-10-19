@@ -3,6 +3,7 @@ package com.gemapps.picapp.ui.adapters;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,7 @@ public class CommentAdapter extends BaseCommentAdapter {
         public CommentViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            mMsg.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
