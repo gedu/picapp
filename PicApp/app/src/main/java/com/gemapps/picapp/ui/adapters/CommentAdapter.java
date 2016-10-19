@@ -46,7 +46,7 @@ public class CommentAdapter extends BaseCommentAdapter {
 
         cHolder.mAuthorName.setText(item.getAuthorName());
         cHolder.mTime.setText(item.getDateCreated() == null ? "" :
-                DateUtils.getRelativeTimeSpanString(item.getPicDate().getTime(),
+                DateUtils.getRelativeTimeSpanString(item.getPicDateFormatted().getTime(),
                         System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS));
         cHolder.mMsg.setText(item.getMsg());
 

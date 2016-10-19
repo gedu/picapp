@@ -8,11 +8,19 @@ import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.networking.FlickrPhotosClient;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by edu on 10/2/16.
  * Photo model to be used by Gson
  */
 public class PicItem implements Parcelable {
+
+    private static final String TAG = "PicItem";
+    private static final SimpleDateFormat PIC_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+    private static final SimpleDateFormat PIC_HEADER_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     @SerializedName("title") private String mTitle;
     @SerializedName("owner") private String mOwnerId;
@@ -85,6 +93,16 @@ public class PicItem implements Parcelable {
 
     public String getPicDateTaken() {
         return mPicDateTaken;
+    }
+
+    public String getPicDateFormatted() {
+
+        try {
+            Date fullDate = PIC_FORMAT.parse(mPicDateTaken);
+            return PIC_HEADER_FORMAT.format(fullDate);
+        } catch (ParseException e) {
+            return "";
+        }
     }
 
     public void setPicDateTaken(String picDateTaken) {

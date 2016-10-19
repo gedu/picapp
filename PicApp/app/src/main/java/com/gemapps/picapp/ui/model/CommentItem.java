@@ -64,7 +64,7 @@ public class CommentItem {
         return mDateCreated;
     }
 
-    public Date getPicDate(){
+    public Date getPicDateFormatted(){
         Long ts = Long.parseLong(mDateCreated) * 1000L;
         return new Date(ts);
     }

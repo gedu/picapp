@@ -74,7 +74,7 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
             final int favesCount = mPicItem.getFavesAmount();
 
             mHeaderHolder.mUsernameView.setText(mPicItem.getOwnerName());
-            mHeaderHolder.mPicTakenDateView.setText(mPicItem.getPicDateTaken());
+            mHeaderHolder.mPicTakenDateView.setText(mPicItem.getPicDateFormatted());
             mHeaderHolder.mTitleView.setText(mPicItem.getTitle());
             mHeaderHolder.mCommentView.setText(mRes.getQuantityString(R.plurals.comments,
                     commentCount, commentCount));
