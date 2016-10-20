@@ -20,6 +20,7 @@ import com.gemapps.picapp.ui.adapters.PicsAdapter;
 import com.gemapps.picapp.ui.model.NoConnectionItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.QueryItem;
+import com.gemapps.picapp.ui.widget.ListToGridMenuHelper;
 
 import java.util.ArrayList;
 
@@ -212,8 +213,7 @@ public class PhotoListActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.menu_photo_list, menu);
         MenuItem item = menu.getItem(0);
         if(item.getItemId() == R.id.action_re_layout){
-            item.setIcon(getResources().getDrawable(!mIsLinearLayout ?
-                    R.drawable.ic_view_list_white_24px : R.drawable.ic_view_module_white_24px));
+            item.setIcon(ListToGridMenuHelper.getDrawable(this, !mIsLinearLayout));
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -231,8 +231,7 @@ public class PhotoListActivity extends BaseActivity {
                         .putBoolean(PHOTO_RECYCLER_LAYOUT, mIsLinearLayout)
                         .apply();
 
-                item.setIcon(getResources().getDrawable(!mIsLinearLayout ?
-                        R.drawable.ic_view_list_white_24px : R.drawable.ic_view_module_white_24px));
+                item.setIcon(ListToGridMenuHelper.morph(this, !mIsLinearLayout));
 
                 mRecyclerView.setLayoutManager(mIsLinearLayout ? LINEAR_LAYOUT : GRID_LAYOUT);
                 mPicsAdapter.updateImageHeight(mIsLinearLayout);
