@@ -2,6 +2,7 @@ package com.gemapps.picapp.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -48,7 +49,7 @@ public class CommentAdapter extends BaseCommentAdapter {
         cHolder.mTime.setText(item.getDateCreated() == null ? "" :
                 DateUtils.getRelativeTimeSpanString(item.getPicDateFormatted().getTime(),
                         System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS));
-        cHolder.mMsg.setText(item.getMsg());
+        cHolder.mMsg.setText(Html.fromHtml(item.getMsg()));
 
         Picasso.with(mContext)
                 .load(item.getIconUrl())
