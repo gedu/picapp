@@ -14,5 +14,12 @@
     <item name="wrap_content" format="integer" type="dimen">-2</item>
 
     <dimen name="keyline_1">72dp</dimen>
+    <dimen name="player_size">120dp</dimen>
+    <dimen name="player_margin_top">48dp</dimen>
+    <dimen name="player_margin_bottom">12dp</dimen>
+    <dimen name="player_elevation">2dp</dimen>
+    <dimen name="player_shots_elevation">4dp</dimen>
+    <dimen name="player_padding_bottom">8dp</dimen>
+    <dimen name="user_photo_size">140dp</dimen>
 
 </resources>

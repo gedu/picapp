@@ -1,11 +1,16 @@
 package com.gemapps.picapp.ui.model;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ImageView;
 
+import com.gemapps.picapp.R;
 import com.gemapps.picapp.data.PicappContract;
+import com.gemapps.picapp.helper.CircleTransform;
 import com.google.gson.annotations.SerializedName;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by edu on 10/5/16.
@@ -53,6 +58,14 @@ public class UserItem implements Parcelable {
 
     public static String getIconUrl(String iconFarm, String iconServer, String nsid){
         return String.format(USER_PIC_URL, iconFarm, iconServer, nsid);
+    }
+
+    public void loadIcon(Context context, ImageView target){
+        Picasso.with(context)
+                .load(getIconUrl())
+                .placeholder(R.drawable.ic_buddy)
+                .error(R.drawable.ic_buddy)
+                .transform(new CircleTransform()).into(target);
     }
 
     public String getId() {

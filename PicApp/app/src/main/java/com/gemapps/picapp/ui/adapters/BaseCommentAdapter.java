@@ -16,11 +16,11 @@ import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 import com.squareup.picasso.Picasso;
 
-import java.text.NumberFormat;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by edu on 10/11/16.
@@ -29,6 +29,10 @@ import butterknife.ButterKnife;
 public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "BaseCommentAdapter";
+
+    public interface BaseCommentListener {
+        void onPlayerClicked(ImageView imageView);
+    }
 
     public static final int HEADER_VIEW_TYPE = 0;
     public static final int COMMENT_VIEW_TYPE = 1;
@@ -39,9 +43,11 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private UserItem mUserItem;
     private HeaderViewHolder mHeaderHolder;
+    private BaseCommentListener mListener;
 
     private Resources mRes;
-    final NumberFormat nf = NumberFormat.getInstance();
+
+    private boolean mWithHeader = true;
 
     public BaseCommentAdapter(List<CommentItem> items, PicItem picItem, Context context) {
         this.mItems = items;
@@ -53,20 +59,30 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
         this.mItems.add(0, new CommentItem());
     }
 
+    public void removeHeader(){
+        mWithHeader = false;
+        mItems.remove(0);
+    }
+
+    public void setListener(BaseCommentListener listener){
+        mListener = listener;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == COMMENT_VIEW_TYPE) {
-            return getCommentViewHolder(parent, viewType);
-        }else{
+        if(viewType == HEADER_VIEW_TYPE) {
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.photo_item_header, parent, false);
             return new CommentAdapter.HeaderViewHolder(v);
+
+        }else {
+            return getCommentViewHolder(parent, viewType);
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(position == 0){
+        if(position == 0 && mWithHeader){
 
             mHeaderHolder = (HeaderViewHolder) holder;
 
@@ -104,7 +120,7 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? HEADER_VIEW_TYPE : COMMENT_VIEW_TYPE;
+        return position == 0 && mWithHeader ? HEADER_VIEW_TYPE : COMMENT_VIEW_TYPE;
     }
 
     public void setUserIcon(UserItem userItem){
@@ -125,10 +141,8 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.user_icon_image)
-        ImageView mIconView;
-        @BindView(R.id.user_name_text)
-        TextView mUsernameView;
+        @BindView(R.id.user_icon_image) ImageView mIconView;
+        @BindView(R.id.user_name_text) TextView mUsernameView;
         @BindView(R.id.pic_title_text) TextView mTitleView;
         @BindView(R.id.pic_comments) TextView mCommentView;
         @BindView(R.id.pic_faves) TextView mFavesView;
@@ -137,6 +151,12 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
         public HeaderViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        @OnClick(R.id.user_icon_image)
+        public void onPlayerClicked(ImageView view){
+
+            if (mListener != null)mListener.onPlayerClicked(view);
         }
     }
 }

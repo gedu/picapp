@@ -3,6 +3,7 @@ package com.gemapps.picapp.helper;
 import android.graphics.Outline;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
@@ -21,4 +22,25 @@ public class ViewUtil {
                     view.getHeight() - view.getPaddingBottom());
         }
     };
+
+
+    /**
+     * Set a new top padding
+     * @param view The view to set the new top padding
+     * @param paddingTop The new padding value
+     */
+    public static void setPaddingTop(View view, int paddingTop){
+
+        if(Utility.isJellyBean17()){
+            view.setPaddingRelative(view.getPaddingStart(),
+                    paddingTop,
+                    view.getPaddingEnd(),
+                    view.getPaddingBottom());
+        }else{
+            ViewCompat.setPaddingRelative(view, view.getPaddingLeft(),
+                    paddingTop,
+                    view.getPaddingRight(),
+                    view.getPaddingBottom());
+        }
+    }
 }

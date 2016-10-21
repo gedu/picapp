@@ -7,6 +7,12 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="AppTheme.Player">
+        <item name="android:statusBarColor">@color/primary_dark_200</item>
+        <item name="android:navigationBarColor">@color/nav_black_150</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
     <style name="AppTheme.Translucent">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>

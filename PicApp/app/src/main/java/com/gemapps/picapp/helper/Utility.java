@@ -38,11 +38,17 @@ public class Utility {
     }
 
     /**
-     *
-     * @return true if lollipop and above, otherwise false
+     * @return true if it is LOLLIPOP and above, otherwise false
      */
     public static boolean isLollipop(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    /**
+     * @return true if it is JELLY_BEAN_MR1 and above, otherwise false
+     */
+    public static boolean isJellyBean17(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
 
     public static Interpolator getFastOutSlowInInterpolator(Context context) {

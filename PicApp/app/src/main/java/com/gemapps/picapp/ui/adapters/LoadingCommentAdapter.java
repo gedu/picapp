@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class LoadingCommentAdapter extends BaseCommentAdapter {
     private static final String TAG = "LoadingCommentAdapter";
+
     public LoadingCommentAdapter(List<CommentItem> items, PicItem picItem, Context context) {
         super(items, picItem, context);
         items.add(new CommentItem());

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -33,7 +34,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 
-public class PhotoItemActivity extends BaseActivity {
+public class PhotoItemActivity extends BaseActivity
+        implements BaseCommentAdapter.BaseCommentListener {
 
     private static final String TAG = "PhotoItemActivity";
     public static final String PIC_EXTRA_KEY = "picapp.picapp_item";
@@ -99,6 +101,7 @@ public class PhotoItemActivity extends BaseActivity {
             public void onSuccess(ArrayList<CommentItem> comments) {
 
                 mCommentAdapter = new CommentAdapter(comments, mPicItem, PhotoItemActivity.this);
+                mCommentAdapter.setListener(PhotoItemActivity.this);
                 mRecyclerView.setAdapter(mCommentAdapter);
             }
         });
@@ -254,12 +257,22 @@ public class PhotoItemActivity extends BaseActivity {
 
     private RecyclerView.Adapter<RecyclerView.ViewHolder> getLoadingAdapter() {
         mCommentAdapter = new LoadingCommentAdapter(new ArrayList<CommentItem>(), mPicItem, PhotoItemActivity.this);
+        mCommentAdapter.setListener(this);
         return mCommentAdapter;
     }
 
     private RecyclerView.Adapter<RecyclerView.ViewHolder> getNoCommentsAdapter() {
         mCommentAdapter = new NoCommentAdapter(new ArrayList<CommentItem>(), mPicItem, PhotoItemActivity.this);
+        mCommentAdapter.setListener(this);
         return mCommentAdapter;
     }
 
+    @Override
+    public void onPlayerClicked(ImageView imageView) {
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(PhotoItemActivity.this, imageView, "user_icon");
+
+        startActivity(PlayerActivity.getInstance(PhotoItemActivity.this, mUserItem, mPicItem),
+                optionsCompat.toBundle());
+    }
 }

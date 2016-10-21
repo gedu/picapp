@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#03A9F4</color>
     <color name="colorPrimaryDark">#0288D1</color>
+    <color name="primary_dark_200">#c80288d1</color>
     <color name="colorAccent">#69F0AE</color>
     <color name="colorAccentDark">#48f19e</color>
 
@@ -16,6 +17,8 @@
     <color name="dialog_background">#7f000000</color>
     <color name="hint_disabled_dark">#43000000</color> <!-- 26% black -->
     <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->
+    <color name="nav_black_150">#96000000</color>
+    <color name="pic_super_dark">#ff33292d</color>
 
     <color name="bg_canvas">#99323232</color>
 

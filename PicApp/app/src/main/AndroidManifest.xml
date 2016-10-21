@@ -43,8 +43,14 @@
         </activity>
 
         <provider
-            android:authorities="com.gemapps.picapp.data"
-            android:name=".data.PicContentProvider"/>
+            android:name=".data.PicContentProvider"
+            android:authorities="com.gemapps.picapp.data"/>
+
+        <activity
+            android:name=".ui.PlayerActivity"
+            android:label=""
+            android:theme="@style/AppTheme.Player">
+        </activity>
     </application>
 
 </manifest>
