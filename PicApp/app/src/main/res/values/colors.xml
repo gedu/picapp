@@ -14,6 +14,7 @@
     <color name="text_primary_light">#ffffffff</color>
     <color name="bg_light_gray">#d6d6d6</color>
 
+    <color name="mid_grey">#40808080</color>
     <color name="dialog_background">#7f000000</color>
     <color name="hint_disabled_dark">#43000000</color> <!-- 26% black -->
     <color name="text_secondary_dark">#8a000000</color> <!-- 54% -->

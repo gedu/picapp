@@ -7,27 +7,32 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/author_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="@dimen/activity_horizontal_margin">
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:foreground="@drawable/row_ripple"
+        android:clickable="true"
+        android:orientation="horizontal">
 
         <com.gemapps.picapp.ui.widget.CircularImageView
             android:id="@+id/user_icon_image"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:transitionName="user_icon"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
+            android:gravity="center"
+            android:clickable="true"
+            android:foreground="@drawable/avatar_ripple"
+            android:transitionName="user_icon"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/pic_title_text"
@@ -35,9 +40,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:maxLines="2"
+                android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
                 tools:text="My Awesome title"/>
 
             <TextView
@@ -46,9 +51,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:maxLines="2"
+                android:textColor="@color/bg_light_gray"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                android:textColor="@color/bg_light_gray"
                 tools:text="My Awesome title"/>
 
         </LinearLayout>
@@ -74,8 +79,8 @@
         <TextView
             android:id="@+id/pic_comments"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:drawableTop="@drawable/ic_chat_bubble_black_24px"
             android:gravity="center"
             tools:text="999"/>
@@ -83,8 +88,8 @@
         <TextView
             android:id="@+id/pic_faves"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:drawableTop="@drawable/ic_favorite_black_24px"
             android:gravity="center"
             tools:text="999"/>

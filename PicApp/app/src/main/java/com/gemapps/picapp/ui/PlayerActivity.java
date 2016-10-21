@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,11 +44,13 @@ public class PlayerActivity extends BaseActivity {
     @BindView(R.id.author_shots) RecyclerView mRecyclerView;
     @BindView(R.id.progressBar) View mLoading;
     @BindView(R.id.author_description) View mDescContainer;
+    @BindView(R.id.empty_list_stub) ViewStub mEmptyView;
     @BindInt(R.integer.player_num_columns) int COLUMNS;
     @BindDimen(R.dimen.player_shots_elevation) int ELEVATION;
 
     private PicItem mPicItem;
     private UserItem mUserItem;
+    private GridLayoutManager mLayoutManager;
 
     public static Intent getInstance(Context context, UserItem userItem, PicItem picItem){
 
@@ -83,7 +87,8 @@ public class PlayerActivity extends BaseActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, COLUMNS, LinearLayoutManager.VERTICAL, false));
+        mLayoutManager = new GridLayoutManager(this, COLUMNS, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         if(savedInstanceState == null)loadPhotos();
         else rebuildState(savedInstanceState);
@@ -95,6 +100,8 @@ public class PlayerActivity extends BaseActivity {
             ArrayList<UserPhotoItem> items = (ArrayList<UserPhotoItem>) savedInstanceState.get(USER_PICS_PREF);
 
             populateList(items);
+        }else{
+            loadPhotos();
         }
     }
 
@@ -105,6 +112,8 @@ public class PlayerActivity extends BaseActivity {
             @Override
             public void onFailure() {
 
+                mLoading.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -128,6 +137,28 @@ public class PlayerActivity extends BaseActivity {
         mRecyclerView.setVisibility(View.VISIBLE);
         if(Utility.isLollipop()) mRecyclerView.setElevation(ELEVATION);
         mLoading.setVisibility(View.GONE);
+
+        // forward clicks to the description view
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                final int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
+
+                if(firstVisible > 0) return false;
+
+                if(mRecyclerView.getAdapter().getItemCount() == 0)
+                    return mDescContainer.dispatchTouchEvent(event);
+
+                final RecyclerView.ViewHolder vh = mRecyclerView.findViewHolderForAdapterPosition(0);
+                if(vh == null) return false;
+
+                if(event.getY() < vh.itemView.getTop())
+                    return mDescContainer.dispatchTouchEvent(event);
+
+                return false;
+            }
+        });
     }
 
     @Override

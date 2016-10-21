@@ -23,10 +23,13 @@
             android:elevation="@dimen/player_elevation"
             android:padding="4dp"
             android:transitionName="user_icon"
+            android:clickable="true"
+            android:foreground="@drawable/avatar_ripple"
             android:src="@drawable/ic_buddy"/>
 
         <TextView
             android:id="@+id/author_name"
+            style="@style/Widget.PicApp.PlayerTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -66,6 +69,13 @@
                 tools:text="999"/>
 
         </LinearLayout>
+
+        <ViewStub
+            android:id="@+id/empty_list_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout="@layout/empty_list_ad"/>
 
     </LinearLayout>
 

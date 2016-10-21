@@ -48,6 +48,13 @@
         <item name="colorAccent">@color/colorAccentDark</item>
     </style>
 
+    <style name="Widget.PicApp" parent="android:Widget"/>
+
+    <style name="Widget.PicApp.PlayerTitle">
+        <item name="android:textAppearance">@style/TextAppearance.Comment.Title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="AppTheme.MarginPoint">
 
         <item name="android:layout_width">@dimen/match_parent</item>

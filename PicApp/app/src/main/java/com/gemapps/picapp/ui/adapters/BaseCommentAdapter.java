@@ -141,6 +141,7 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.author_container) View mContainer;
         @BindView(R.id.user_icon_image) ImageView mIconView;
         @BindView(R.id.user_name_text) TextView mUsernameView;
         @BindView(R.id.pic_title_text) TextView mTitleView;
@@ -158,5 +159,12 @@ public abstract class BaseCommentAdapter extends RecyclerView.Adapter<RecyclerVi
 
             if (mListener != null)mListener.onPlayerClicked(view);
         }
+
+        @OnClick(R.id.author_container)
+        public void onContainerClicked(){
+
+            if (mListener != null)mListener.onPlayerClicked(mIconView);
+        }
+
     }
 }
