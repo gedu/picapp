@@ -3,6 +3,7 @@ package com.gemapps.picapp.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ public class PlayerActivity extends BaseActivity {
 
     private static final String USER_PICS_PREF = "picapp.user_pics_pref";
 
+    @Nullable @BindView(R.id.dual_panel) View mDualPanel;
     @BindView(R.id.activity_player) View mContainer;
     @BindView(R.id.user_icon_image) ImageView mUserIcon;
     @BindView(R.id.author_name) TextView mAuthorName;
@@ -51,6 +53,7 @@ public class PlayerActivity extends BaseActivity {
     private PicItem mPicItem;
     private UserItem mUserItem;
     private GridLayoutManager mLayoutManager;
+    private boolean isDualPanel;
 
     public static Intent getInstance(Context context, UserItem userItem, PicItem picItem){
 
@@ -67,6 +70,7 @@ public class PlayerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
+        isDualPanel = mDualPanel != null;
 
         Bundle bundle = getIntent().getExtras();
         mPicItem = bundle.getParcelable(PIC_EXTRA_KEY);
@@ -127,38 +131,43 @@ public class PlayerActivity extends BaseActivity {
     private void populateList(ArrayList<UserPhotoItem> userPhotos){
         UserPhotosAdapter adapter = new UserPhotosAdapter(userPhotos, PlayerActivity.this);
 
-        if(mDescContainer.getHeight() == 0){
-            mDescContainer.getViewTreeObserver().addOnGlobalLayoutListener(mContainerLayoutListener);
-        }else {
-            ViewUtil.setPaddingTop(mRecyclerView, mDescContainer.getHeight());
+        if(!isDualPanel) {
+            addPaddingTopPadding();
+            // forward clicks to the description view
+            mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    final int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if(firstVisible > 0) return false;
+
+                    if(mRecyclerView.getAdapter().getItemCount() == 0)
+                        return mDescContainer.dispatchTouchEvent(event);
+
+                    final RecyclerView.ViewHolder vh = mRecyclerView.findViewHolderForAdapterPosition(0);
+                    if(vh == null) return false;
+
+                    if(event.getY() < vh.itemView.getTop())
+                        return mDescContainer.dispatchTouchEvent(event);
+
+                    return false;
+                }
+            });
         }
 
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setVisibility(View.VISIBLE);
         if(Utility.isLollipop()) mRecyclerView.setElevation(ELEVATION);
         mLoading.setVisibility(View.GONE);
+    }
 
-        // forward clicks to the description view
-        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                final int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
-
-                if(firstVisible > 0) return false;
-
-                if(mRecyclerView.getAdapter().getItemCount() == 0)
-                    return mDescContainer.dispatchTouchEvent(event);
-
-                final RecyclerView.ViewHolder vh = mRecyclerView.findViewHolderForAdapterPosition(0);
-                if(vh == null) return false;
-
-                if(event.getY() < vh.itemView.getTop())
-                    return mDescContainer.dispatchTouchEvent(event);
-
-                return false;
-            }
-        });
+    private void addPaddingTopPadding(){
+        if(mDescContainer.getHeight() == 0){
+            mDescContainer.getViewTreeObserver().addOnGlobalLayoutListener(mContainerLayoutListener);
+        }else {
+            ViewUtil.setPaddingTop(mRecyclerView, mDescContainer.getHeight());
+        }
     }
 
     @Override
