@@ -21,5 +21,6 @@
     <dimen name="player_shots_elevation">4dp</dimen>
     <dimen name="player_padding_bottom">8dp</dimen>
     <dimen name="user_photo_size">140dp</dimen>
+    <dimen name="loading_margin_bottom">52dp</dimen>
 
 </resources>

@@ -269,6 +269,10 @@ public class PhotoItemActivity extends BaseActivity
 
     @Override
     public void onPlayerClicked(ImageView imageView) {
+
+        //HACK: Have to wait until we have the user info
+        if(mUserItem == null) return;
+
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(PhotoItemActivity.this, imageView, "user_icon");
 
