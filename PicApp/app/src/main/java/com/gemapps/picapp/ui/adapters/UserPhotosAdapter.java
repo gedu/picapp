@@ -11,7 +11,7 @@ import com.gemapps.picapp.R;
 import com.gemapps.picapp.ui.model.UserPhotoItem;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,10 +21,10 @@ import butterknife.ButterKnife;
  */
 public class UserPhotosAdapter extends RecyclerView.Adapter<UserPhotosAdapter.UserPhotoViewHolder> {
     private final Context mContext;
-    private List<UserPhotoItem> items;
+    private ArrayList<UserPhotoItem> mItems;
 
-    public UserPhotosAdapter(List<UserPhotoItem> items, Context context) {
-        this.items = items;
+    public UserPhotosAdapter(ArrayList<UserPhotoItem> items, Context context) {
+        this.mItems = items;
         this.mContext = context;
     }
 
@@ -38,7 +38,7 @@ public class UserPhotosAdapter extends RecyclerView.Adapter<UserPhotosAdapter.Us
 
     @Override
     public void onBindViewHolder(UserPhotoViewHolder holder, int position) {
-        UserPhotoItem item = items.get(position);
+        UserPhotoItem item = mItems.get(position);
 
         Picasso.with(mContext)
                 .load(item.getPhotoUrl())
@@ -46,12 +46,16 @@ public class UserPhotosAdapter extends RecyclerView.Adapter<UserPhotosAdapter.Us
                 .into(holder.mUserPhoto);
     }
 
+    public ArrayList<UserPhotoItem> getItems(){
+        return mItems;
+    }
+
     @Override
     public int getItemCount() {
-        if (items == null) {
+        if (mItems == null) {
             return 0;
         }
-        return items.size();
+        return mItems.size();
     }
 
     public class UserPhotoViewHolder extends RecyclerView.ViewHolder {

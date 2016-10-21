@@ -1,12 +1,15 @@
 package com.gemapps.picapp.ui.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by edu on 10/20/16.
  */
 
-public class UserPhotoItem {
+public class UserPhotoItem implements Parcelable {
 
     /**
      * farm
@@ -22,6 +25,15 @@ public class UserPhotoItem {
     @SerializedName("server") private String mServerId;
     @SerializedName("farm") private String mFarmId;
     @SerializedName("title") private String mTitle;
+
+    public UserPhotoItem(Parcel in){
+        mId = in.readString();
+        mOwnerId = in.readString();
+        mSecretId = in.readString();
+        mServerId = in.readString();
+        mFarmId = in.readString();
+        mTitle = in.readString();
+    }
 
     public UserPhotoItem(String id, String ownerId, String secretId, String serverId, String farmId, String title) {
         mId = id;
@@ -83,4 +95,30 @@ public class UserPhotoItem {
     public void setTitle(String title) {
         mTitle = title;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(mId);
+        dest.writeString(mOwnerId);
+        dest.writeString(mSecretId);
+        dest.writeString(mServerId);
+        dest.writeString(mFarmId);
+        dest.writeString(mTitle);
+    }
+
+    public static final Parcelable.Creator<UserPhotoItem> CREATOR = new Parcelable.Creator<UserPhotoItem>() {
+        public UserPhotoItem createFromParcel(Parcel in) {
+            return new UserPhotoItem(in);
+        }
+
+        public UserPhotoItem[] newArray(int size) {
+            return new UserPhotoItem[size];
+        }
+    };
 }

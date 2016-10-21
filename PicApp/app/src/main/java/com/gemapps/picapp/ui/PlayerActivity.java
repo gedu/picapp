@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,8 @@ import static com.gemapps.picapp.ui.PhotoItemActivity.PIC_EXTRA_KEY;
 import static com.gemapps.picapp.ui.PhotoItemActivity.USER_EXTRA_KEY;
 
 public class PlayerActivity extends BaseActivity {
+
+    private static final String USER_PICS_PREF = "picapp.user_pics_pref";
 
     @BindView(R.id.activity_player) View mContainer;
     @BindView(R.id.user_icon_image) ImageView mUserIcon;
@@ -82,7 +85,17 @@ public class PlayerActivity extends BaseActivity {
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, COLUMNS, LinearLayoutManager.VERTICAL, false));
 
-        loadPhotos();
+        if(savedInstanceState == null)loadPhotos();
+        else rebuildState(savedInstanceState);
+    }
+
+    private void rebuildState(Bundle savedInstanceState) {
+
+        if(savedInstanceState.containsKey(USER_PICS_PREF)){
+            ArrayList<UserPhotoItem> items = (ArrayList<UserPhotoItem>) savedInstanceState.get(USER_PICS_PREF);
+
+            populateList(items);
+        }
     }
 
     private void loadPhotos(){
@@ -97,16 +110,42 @@ public class PlayerActivity extends BaseActivity {
             @Override
             public void onSuccess(ArrayList<UserPhotoItem> userPhotos) {
 
-                UserPhotosAdapter adapter = new UserPhotosAdapter(userPhotos, PlayerActivity.this);
-
-                ViewUtil.setPaddingTop(mRecyclerView, mDescContainer.getHeight());
-
-                mRecyclerView.setAdapter(adapter);
-                mRecyclerView.setVisibility(View.VISIBLE);
-                if(Utility.isLollipop()) mRecyclerView.setElevation(ELEVATION);
-                mLoading.setVisibility(View.GONE);
-
+                populateList(userPhotos);
             }
         });
     }
+
+    private void populateList(ArrayList<UserPhotoItem> userPhotos){
+        UserPhotosAdapter adapter = new UserPhotosAdapter(userPhotos, PlayerActivity.this);
+
+        if(mDescContainer.getHeight() == 0){
+            mDescContainer.getViewTreeObserver().addOnGlobalLayoutListener(mContainerLayoutListener);
+        }else {
+            ViewUtil.setPaddingTop(mRecyclerView, mDescContainer.getHeight());
+        }
+
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        if(Utility.isLollipop()) mRecyclerView.setElevation(ELEVATION);
+        mLoading.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        if(mRecyclerView.getAdapter() != null){
+            outState.putParcelableArrayList(USER_PICS_PREF,
+                    ((UserPhotosAdapter)mRecyclerView.getAdapter()).getItems());
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    private final ViewTreeObserver.OnGlobalLayoutListener mContainerLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            ViewUtil.setPaddingTop(mRecyclerView, mDescContainer.getHeight());
+            mDescContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        }
+    };
 }
