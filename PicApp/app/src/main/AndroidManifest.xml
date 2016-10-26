@@ -48,8 +48,11 @@
 
         <activity
             android:name=".ui.PlayerActivity"
-            android:label=""
+            android:label="@null"
             android:theme="@style/AppTheme.Player">
+        </activity>
+        <activity android:name=".ui.PhotoDetailActivity"
+            android:label="@null">
         </activity>
     </application>
 

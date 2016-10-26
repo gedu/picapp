@@ -14,10 +14,10 @@ import java.util.ArrayList;
  * Created by edu on 10/20/16.
  * Flickr api to get photos from a specific user
  */
-public class FlickerUserPhotosClient extends BaseHttpClient
+public class FlickrUserPhotosClient extends BaseHttpClient
         implements BaseHttpClient.CallbackResponse {
 
-    private static final String TAG = "FlickerUserPhotosClient";
+    private static final String TAG = "FlickrUserPhotosClient";
     public interface UserPhotosListener {
         void onFailure();
         void onSuccess(ArrayList<UserPhotoItem> userPhotos);
@@ -27,7 +27,7 @@ public class FlickerUserPhotosClient extends BaseHttpClient
      * 1 api key
      * 2 user id
      */
-    public static final String USER_PHOTOS_URL = "https://api.flickr.com/services/rest?" +
+    public static final String USER_PHOTOS_URL = FLICKR_URL +
             "method=flickr.people.getPhotos&" +
             "api_key=%s&user_id=%s&format=json&nojsoncallback=1&" +
             "per_page=20&page=1";

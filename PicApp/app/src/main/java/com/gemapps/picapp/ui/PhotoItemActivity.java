@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.data.PicSqlHelper;
 import com.gemapps.picapp.data.PicappContract;
-import com.gemapps.picapp.networking.FlickerUserClient;
+import com.gemapps.picapp.networking.FlickrUserClient;
 import com.gemapps.picapp.networking.FlickrCommentsClient;
 import com.gemapps.picapp.ui.adapters.BaseCommentAdapter;
 import com.gemapps.picapp.ui.adapters.CommentAdapter;
@@ -109,7 +109,7 @@ public class PhotoItemActivity extends BaseActivity
 
     private void loadUserHeaderAsync() {
 
-        new FlickerUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickerUserClient.UserListener() {
+        new FlickrUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickrUserClient.UserListener() {
             @Override
             public void onFailure() {}
 

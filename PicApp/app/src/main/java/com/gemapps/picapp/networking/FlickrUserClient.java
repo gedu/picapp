@@ -13,21 +13,21 @@ import org.json.JSONObject;
  * Flickr api to get a user info
  */
 
-public class FlickerUserClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse{
+public class FlickrUserClient extends BaseHttpClient implements BaseHttpClient.CallbackResponse{
 
-    private static final String TAG = "FlickerUserClient";
+    private static final String TAG = "FlickrUserClient";
     public interface UserListener {
         void onFailure();
         void onSuccess(UserItem userItem);
     }
 
-    public static final String USER_INFO_URL = "https://api.flickr.com/services/rest?" +
+    public static final String USER_INFO_URL = FLICKR_URL +
             "method=flickr.people.getInfo&" +
             "api_key=%s&user_id=%s&format=json&nojsoncallback=1";
 
     private UserListener mListener;
 
-    public void getUserInfo(String userId, FlickerUserClient.UserListener responseListener) {
+    public void getUserInfo(String userId, FlickrUserClient.UserListener responseListener) {
 
         mListener = responseListener;
 

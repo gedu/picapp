@@ -20,6 +20,7 @@
     <string name="action_bookmark">Bookmarks</string>
     <string name="bookmark">Bookmark</string>
     <string name="no_comment_text">No comments</string>
+    <string name="no_description_text">No description</string>
 
     <plurals name="comments">
         <item quantity="zero">No Comments</item>

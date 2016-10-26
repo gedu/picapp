@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.gemapps.picapp.networking.FlickerUserClient;
+import com.gemapps.picapp.networking.FlickrUserClient;
 import com.gemapps.picapp.networking.FlickrPhotosClient;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
@@ -334,7 +334,7 @@ public class TestDb {
                 "      \"count\": { \"_content\": \"806\" } } }, \"stat\": \"ok\" }";
 
         try {
-            return new FlickerUserClient().parse(userResponse);
+            return new FlickrUserClient().parse(userResponse);
         } catch (JSONException e) {
             return null;
         }

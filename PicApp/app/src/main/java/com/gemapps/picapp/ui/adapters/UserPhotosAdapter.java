@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.gemapps.picapp.R;
+import com.gemapps.picapp.ui.PhotoDetailActivity;
 import com.gemapps.picapp.ui.model.UserPhotoItem;
 import com.squareup.picasso.Picasso;
 
@@ -20,12 +21,16 @@ import butterknife.ButterKnife;
  * Created by edu on 10/21/16.
  */
 public class UserPhotosAdapter extends RecyclerView.Adapter<UserPhotosAdapter.UserPhotoViewHolder> {
+
+    private static final String TAG = "UserPhotosAdapter";
     private final Context mContext;
     private ArrayList<UserPhotoItem> mItems;
+    private String mAuthorName;
 
-    public UserPhotosAdapter(ArrayList<UserPhotoItem> items, Context context) {
+    public UserPhotosAdapter(String authorName, ArrayList<UserPhotoItem> items, Context context) {
         this.mItems = items;
         this.mContext = context;
+        this.mAuthorName = authorName;
     }
 
     @Override
@@ -38,7 +43,15 @@ public class UserPhotosAdapter extends RecyclerView.Adapter<UserPhotosAdapter.Us
 
     @Override
     public void onBindViewHolder(UserPhotoViewHolder holder, int position) {
-        UserPhotoItem item = mItems.get(position);
+        final UserPhotoItem item = mItems.get(position);
+
+        holder.mUserPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mContext.startActivity(PhotoDetailActivity.getInstance(mContext, item, mAuthorName));
+            }
+        });
 
         Picasso.with(mContext)
                 .load(item.getPhotoUrl())

@@ -4,6 +4,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.gemapps.picapp.R;
 
@@ -17,6 +18,7 @@ import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity {
 
+    private static final String TAG = "BaseActivity";
     @Nullable @BindView(R.id.toolbar) Toolbar mToolbar;
 
     @Override
@@ -24,6 +26,7 @@ public class BaseActivity extends AppCompatActivity {
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
 
+        Log.d(TAG, "setContentView: "+mToolbar);
         if(mToolbar != null) setSupportActionBar(mToolbar);
     }
 

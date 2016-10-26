@@ -2,8 +2,11 @@ package com.gemapps.picapp.ui.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by edu on 10/20/16.
@@ -36,6 +39,7 @@ public class UserPhotoItem implements Parcelable {
     }
 
     public UserPhotoItem(String id, String ownerId, String secretId, String serverId, String farmId, String title) {
+        Log.d(TAG, "UserPhotoItem() called with: id = [" + id + "], ownerId = [" + ownerId + "], secretId = [" + secretId + "], serverId = [" + serverId + "], farmId = [" + farmId + "], title = [" + title + "]");
         mId = id;
         mOwnerId = ownerId;
         mSecretId = secretId;

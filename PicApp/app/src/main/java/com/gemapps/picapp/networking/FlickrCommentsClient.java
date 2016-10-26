@@ -24,7 +24,7 @@ public class FlickrCommentsClient extends BaseHttpClient implements BaseHttpClie
         void onSuccess(ArrayList<CommentItem> comments);
     }
 
-    private static final String COMMENTS_URL = "https://api.flickr.com/services/rest?" +
+    private static final String COMMENTS_URL = FLICKR_URL +
             "method=flickr.photos.comments.getList&api_key=%s&photo_id=%s&format=json&nojsoncallback=1";
 
     private CommentsListener mListener;

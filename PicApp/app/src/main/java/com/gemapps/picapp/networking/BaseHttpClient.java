@@ -18,6 +18,8 @@ import okhttp3.Response;
 public class BaseHttpClient {
 
     private static final String TAG = "BaseHttpClient";
+    protected static final String FLICKR_URL = "https://api.flickr.com/services/rest?";
+
 
     public interface CallbackResponse {
         void onFailure();

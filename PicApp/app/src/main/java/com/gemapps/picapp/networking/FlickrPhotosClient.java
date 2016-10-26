@@ -39,7 +39,7 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
      * 4 query
      * 5 method
      */
-    private static final String FLICKR_SEARCH_URL = "https://api.flickr.com/services/rest?" +
+    private static final String FLICKR_SEARCH_URL = FLICKR_URL +
             "sort=relevance&parse_tags=1&content_type=7&api_key=%s&per_page=%s&page=%s&" +
             "extras=owner,date_taken,count_comments,count_faves,owner_name,url_n,url_c,url_b" +
             "&%sformat=json&nojsoncallback=1&method=flickr.photos.%s";

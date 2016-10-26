@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.helper.Utility;
 import com.gemapps.picapp.helper.ViewUtil;
-import com.gemapps.picapp.networking.FlickerUserPhotosClient;
+import com.gemapps.picapp.networking.FlickrUserPhotosClient;
 import com.gemapps.picapp.ui.adapters.UserPhotosAdapter;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
@@ -112,7 +112,7 @@ public class PlayerActivity extends BaseActivity {
     private void loadPhotos(){
         mLoading.setVisibility(View.VISIBLE);
 
-        new FlickerUserPhotosClient().getUserPhotos(mUserItem.getId(), new FlickerUserPhotosClient.UserPhotosListener() {
+        new FlickrUserPhotosClient().getUserPhotos(mUserItem.getId(), new FlickrUserPhotosClient.UserPhotosListener() {
             @Override
             public void onFailure() {
 
@@ -129,7 +129,7 @@ public class PlayerActivity extends BaseActivity {
     }
 
     private void populateList(ArrayList<UserPhotoItem> userPhotos){
-        UserPhotosAdapter adapter = new UserPhotosAdapter(userPhotos, PlayerActivity.this);
+        UserPhotosAdapter adapter = new UserPhotosAdapter(mPicItem.getOwnerName(), userPhotos, PlayerActivity.this);
 
         if(!isDualPanel) {
             addPaddingTopPadding();
