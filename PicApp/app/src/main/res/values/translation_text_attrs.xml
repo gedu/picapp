@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TranslationTextView" >
+        <attr name="scaleText" format="float"/>
+        <attr name="anchor" format="reference"/>
+
+    </declare-styleable>
+</resources>

@@ -13,6 +13,7 @@ import com.gemapps.picapp.networking.FlickrPhotoInfoClient;
 import com.gemapps.picapp.ui.model.PhotoInfoItem;
 import com.gemapps.picapp.ui.model.UserPhotoItem;
 import com.gemapps.picapp.ui.widget.FixScaleImageVIew;
+import com.gemapps.picapp.ui.widget.TranslationTextView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -26,7 +27,7 @@ public class PhotoDetailActivity extends BaseActivity
     private static final String PHOTO_ITEM_PREF = "picapp.photo_item_pref";
     private static final String AUTHOR_NAME_PREF = "picapp.author_name_pref";
 
-    @BindView(R.id.author_name) TextView mAuthorView;
+    @BindView(R.id.author_name) TranslationTextView mAuthorName;
     @BindView(R.id.photo_title) TextView mPhotoTitleView;
     @BindView(R.id.photo_description) TextView mPhotoDescription;
     @BindView(R.id.bottom_sheet) View mBottomDescription;
@@ -62,18 +63,23 @@ public class PhotoDetailActivity extends BaseActivity
 
         new FlickrPhotoInfoClient().getPhotoInfo(item.getId(), this);
 
-        mAuthorView.setText(authorName);
+        mAuthorName.setText(authorName);
 
         Picasso.with(this).load(item.getPhotoUrl()).into(mPhoto);
     }
+
 
     @OnClick(R.id.bottom_sheet)
     public void onSheetClicked(){
 
         if((mSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED)){
+
+            mAuthorName.translateForward();
             mPhoto.zoomIn();
             mSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }else{
+
+            mAuthorName.translateBack();
             mPhoto.zoomOut();
             mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
