@@ -80,7 +80,7 @@
 
     <com.gemapps.picapp.ui.widget.TranslationTextView
         android:id="@+id/author_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:layout_marginLeft="?attr/actionBarSize"
@@ -88,7 +88,7 @@
         android:layout_marginTop="10dp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
-        app:scaleText="2"
+        app:scaleText="1.5"
         app:anchor="@+id/placeholder"
         tools:text="My Author name"/>
 

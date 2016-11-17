@@ -5,9 +5,10 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -75,6 +76,7 @@ public class TranslationTextView extends TextView {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -88,12 +90,16 @@ public class TranslationTextView extends TextView {
                 mAnchorView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+
+        Display display = getDisplay();
+        Point size = new Point();
+        display.getSize(size);
     }
 
     private void setupAnimations(){
 
         ObjectAnimator xAnimFor = ObjectAnimator.ofFloat(this, View.TRANSLATION_X, mAnchorView.getX()/2f);
-        xAnimFor.setStartDelay(100);
+        xAnimFor.setStartDelay(50);
 
         mForwardViewSet.play(xAnimFor)
                 .with(ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, mAnchorView.getY()/2f))
@@ -101,14 +107,26 @@ public class TranslationTextView extends TextView {
                 .with(ObjectAnimator.ofFloat(this, View.SCALE_Y, NORMAL_SCALE, mScaleValue));
         mForwardViewSet.setInterpolator(DECELERATE_INTERPOLATOR);
 
-        ObjectAnimator xAnimBack = ObjectAnimator.ofFloat(this, View.TRANSLATION_X, TO_START_POSITION);
-        xAnimFor.setStartDelay(100);
+        ObjectAnimator yAnimBack = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, TO_START_POSITION);
+        yAnimBack.setStartDelay(50);
 
-        mBackViewSet.play(xAnimBack)
-                .with(ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, TO_START_POSITION))
+        mBackViewSet.play(ObjectAnimator.ofFloat(this, View.TRANSLATION_X, TO_START_POSITION))
+                .with(yAnimBack)
                 .with(ObjectAnimator.ofFloat(this, View.SCALE_X, NORMAL_SCALE))
                 .with(ObjectAnimator.ofFloat(this, View.SCALE_Y, NORMAL_SCALE));
         mBackViewSet.setInterpolator(ACCELERATE_INTERPOLATOR);
+//        mBackViewSet.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                super.onAnimationEnd(animation);
+//
+//                Log.d(TAG, "getX: "+getX());
+//                Log.d(TAG, "getY: "+getY());
+//                Log.d(TAG, "getWidth: "+getWidth());
+//                Log.d(TAG, "getHeight: "+getHeight());
+//
+//            }
+//        });
     }
 
     public void translateForward(){

@@ -81,8 +81,10 @@ public class FixScaleImageVIew extends ImageView {
     @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
-        mOriginalBitmap = drawable;
-        mBlurBitmap = new BitmapDrawable(blurRenderScript(((BitmapDrawable)drawable).getBitmap(), 10));
+        if(drawable != null) {
+            mOriginalBitmap = drawable;
+            mBlurBitmap = new BitmapDrawable(blurRenderScript(((BitmapDrawable) drawable).getBitmap(), 10));
+        }
     }
 
     public void zoomOut(){
