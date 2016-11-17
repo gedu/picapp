@@ -13,3 +13,9 @@ Still on build
 Add yout Flickr API Key in gradle.properties
 
 FLICKR_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxx"
+
+Known issues:
+
+- Detail photo page not working well on landscape or tablets
+- User profile should be loaded when the pic is requested (is small data to fetch and can make the flow smoother)
+- Some UI details
