@@ -68,7 +68,6 @@ public class PhotoDetailActivity extends BaseActivity
         Picasso.with(this).load(item.getPhotoUrl()).into(mPhoto);
     }
 
-
     @OnClick(R.id.bottom_sheet)
     public void onSheetClicked(){
 
