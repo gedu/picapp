@@ -131,6 +131,7 @@ public class PhotoItemActivity extends BaseActivity
         }else{
             mBus.register(this);
         }
+
     }
 
     private void updateUserView(){
@@ -192,12 +193,17 @@ public class PhotoItemActivity extends BaseActivity
                 SQLiteDatabase readDb = helper.getReadableDatabase();
 
                 long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
+                long pubId = PicappContract.PublicationEntry.getPublicationUniqueId(readDb, mPicItem);
 
-                int count = removeDb.delete(PicappContract.UserEntry.TABLE_NAME,
+                int uCount = removeDb.delete(PicappContract.UserEntry.TABLE_NAME,
                         PicappContract.UserEntry._ID + "= ?",
                         new String[]{String.valueOf(userId)});
 
-                if (count > 0) {
+                int pCount = removeDb.delete(PicappContract.PublicationEntry.TABLE_NAME,
+                        PicappContract.PublicationEntry._ID + "= ?",
+                        new String[]{String.valueOf(pubId)});
+
+                if (uCount > 0 && pCount > 0) {
                     mInBookmark = false;
                     updateBookmarkState();
                     Snackbar.make(mCoordinatorLayout, R.string.deleted, Snackbar.LENGTH_SHORT).show();
@@ -255,9 +261,8 @@ public class PhotoItemActivity extends BaseActivity
         PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
         SQLiteDatabase readDb = helper.getReadableDatabase();
 
-
         long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
-        long pubId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, mPicItem);
+        long pubId = PicappContract.PublicationEntry.getPublicationUniqueId(readDb, mPicItem);
 
         if (userId == -1 || pubId == -1) return false;
 
@@ -271,6 +276,7 @@ public class PhotoItemActivity extends BaseActivity
         boolean exist = cursor != null && cursor.getCount() > 0;
 
         if (cursor != null) cursor.close();
+
         readDb.close();
 
         return exist;

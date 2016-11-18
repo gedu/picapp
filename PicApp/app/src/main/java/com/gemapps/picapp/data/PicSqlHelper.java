@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class PicSqlHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = "PicSqlHelper";
     private static final int DATABASE_VERSION = 1;
 
     public static final String DATABASE_NAME = "gempicapp.db";
@@ -39,12 +40,14 @@ public class PicSqlHelper extends SQLiteOpenHelper {
 
     @Override
     public void onConfigure(SQLiteDatabase db) {
+
         db.setForeignKeyConstraintsEnabled(true);
         super.onConfigure(db);
     }
 
     @Override
     public void onOpen(SQLiteDatabase db) {
+
         db.setForeignKeyConstraintsEnabled(true);
         super.onOpen(db);
     }

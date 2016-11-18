@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.gemapps.picapp.networking.FlickrUserClient;
 import com.gemapps.picapp.networking.FlickrPhotosClient;
+import com.gemapps.picapp.networking.FlickrUserClient;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 
@@ -189,7 +189,7 @@ public class TestDb {
         SQLiteDatabase readDb = helper.getReadableDatabase();
 
         long userDbId = PicappContract.UserEntry.getUserDbId(readDb, userItem);
-        long pubDbId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, picItem);
+        long pubDbId = PicappContract.PublicationEntry.getPublicationUniqueId(readDb, picItem);
 
         Cursor cursor = readDb.query(PicappContract.BookmarkEntry.TABLE_NAME,
                 null,
@@ -234,19 +234,19 @@ public class TestDb {
                 PicappContract.UserEntry._ID + "= ?",
                 new String[]{String.valueOf(userId)});
 
+        int pCount = db.delete(PicappContract.PublicationEntry.TABLE_NAME,
+                PicappContract.PublicationEntry._ID + "= ?",
+                new String[]{String.valueOf(pubId)});
+
         int bCount = db.delete(PicappContract.BookmarkEntry.TABLE_NAME,
                 PicappContract.BookmarkEntry.COLUMN_USER_ID + "= ? AND " +
                         PicappContract.BookmarkEntry.COLUMN_PUBLICATION_ID + "= ?",
                 new String[]{String.valueOf(userId), String.valueOf(pubId)});
 
-        int pCount = db.delete(PicappContract.UserEntry.TABLE_NAME,
-                PicappContract.PublicationEntry._ID + "= ?",
-                new String[]{String.valueOf(pubId)});
-
         //Deletion will cascade so deleting the user will do the same with the others tables
         assertEquals(1, uCount);
+        assertEquals(1, pCount);
         assertEquals(0, bCount);
-        assertEquals(0, pCount);
 
         db.close();
     }

@@ -155,7 +155,7 @@ public class PicappContract  {
             return contentValues;
         }
 
-        public static long buildPublicationUniqueId(SQLiteDatabase db, PicItem picItem){
+        public static long getPublicationUniqueId(SQLiteDatabase db, PicItem picItem){
             Cursor cursor = db.query(PublicationEntry.TABLE_NAME, new String[]{PublicationEntry._ID, PublicationEntry.COLUMN_PIC_ID},
                     PublicationEntry.COLUMN_PIC_ID+"= ?", new String[]{picItem.getPicId()}, null, null, null);
 
@@ -180,8 +180,8 @@ public class PicappContract  {
 
         public static final String TABLE_NAME = "bookmark";
 
-        public static final String COLUMN_PUBLICATION_ID = "publication_db_id";
         public static final String COLUMN_USER_ID = "user_db_id";
+        public static final String COLUMN_PUBLICATION_ID = "publication_db_id";
 
         public static final String TN_ID = TABLE_NAME + "." + _ID;
         public static final String TN_USER_ID = TABLE_NAME + "." + COLUMN_USER_ID;
@@ -189,16 +189,13 @@ public class PicappContract  {
 
         public static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
 
-                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
-                COLUMN_PUBLICATION_ID + " INTEGER NOT NULL, " +
-                COLUMN_USER_ID + " INTEGER NOT NULL," +
+                COLUMN_USER_ID + " INTEGER NOT NULL REFERENCES " +
+                UserEntry.TABLE_NAME + "(" + UserEntry._ID + ") ON DELETE CASCADE, " +
 
-                " FOREIGN KEY (" + COLUMN_USER_ID + ") REFERENCES " +
-                UserEntry.TABLE_NAME + " (" + UserEntry._ID + ") ON DELETE CASCADE, " +
-
-                " FOREIGN KEY (" + COLUMN_PUBLICATION_ID + ") REFERENCES " +
-                PublicationEntry.TABLE_NAME + " (" + PublicationEntry._ID + ") ON DELETE CASCADE" +
+                COLUMN_PUBLICATION_ID + " INTEGER NOT NULL REFERENCES " +
+                PublicationEntry.TABLE_NAME + "(" + PublicationEntry._ID + ") ON DELETE CASCADE"+
                 ");";
 
         public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -207,8 +204,8 @@ public class PicappContract  {
 
             ContentValues contentValues = new ContentValues();
 
-            contentValues.put(COLUMN_PUBLICATION_ID, pubId);
             contentValues.put(COLUMN_USER_ID, userId);
+            contentValues.put(COLUMN_PUBLICATION_ID, pubId);
 
             return contentValues;
         }

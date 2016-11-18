@@ -9,8 +9,8 @@ android {
         applicationId "com.gemapps.picapp"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 24010401
-        versionName "1.4.1"
+        versionCode 24010402
+        versionName "1.4.2"
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "FLICKR_API_KEY", FLICKR_API_KEY
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
