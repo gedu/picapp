@@ -30,7 +30,7 @@ public class BookmarkCursorLoader extends CursorAdapter {
     private static final String TAG = "BookmarkCursorLoader";
 
     public interface BookmarkListener {
-        void onClicked(UserItem userItem, PicItem picItem, View imageView);
+        void onClicked(PicItem picItem, View imageView);
     }
 
     private BookmarkListener mListener;
@@ -52,6 +52,7 @@ public class BookmarkCursorLoader extends CursorAdapter {
         final BookmarkViewHolder holder = new BookmarkViewHolder(view);
         final UserItem userItem = new UserItem(getCursor());
         final PicItem picItem = new PicItem(getCursor());
+        picItem.setUserItem(userItem);
 
         holder.mPicTitle.setText(cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_TITLE)));
         holder.mUserName.setText(cursor.getString(cursor.getColumnIndex(PicappContract.PublicationEntry.COLUMN_OWNER_NAME)));
@@ -65,7 +66,7 @@ public class BookmarkCursorLoader extends CursorAdapter {
             @Override
             public void onClick(View v) {
 
-                mListener.onClicked(userItem, picItem, holder.mIconImage);
+                mListener.onClicked(picItem, holder.mIconImage);
             }
         });
         Picasso.with(context)

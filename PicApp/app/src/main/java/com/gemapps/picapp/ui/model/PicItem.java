@@ -1,16 +1,23 @@
 package com.gemapps.picapp.ui.model;
 
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.networking.FlickrPhotosClient;
+import com.gemapps.picapp.networking.FlickrUserClient;
 import com.google.gson.annotations.SerializedName;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.gemapps.picapp.ui.PhotoItemActivity.USER_EXTRA_KEY;
+import static com.gemapps.picapp.ui.model.PicItem.PicMessage.LOAD_SUCCESS;
 
 /**
  * Created by edu on 10/2/16.
@@ -35,6 +42,8 @@ public class PicItem implements Parcelable {
     @SerializedName("server") private String mServerId;
     @SerializedName("secret") private String mSecretId;
 
+    private transient UserItem mUserItem;
+
     public PicItem(Parcel in) {
         mTitle = in.readString();
         mOwnerId = in.readString();
@@ -47,6 +56,7 @@ public class PicItem implements Parcelable {
         mFarm = in.readString();
         mServerId = in.readString();
         mSecretId = in.readString();
+        mUserItem = in.readParcelable(UserItem.class.getClassLoader());
     }
 
     public PicItem(String title, String ownerId, String ownerName, String picUrl, String faves, String comments,
@@ -189,6 +199,40 @@ public class PicItem implements Parcelable {
         mPicUrl = picUrl;
     }
 
+    /**
+     * @return the user obj or null if the loading didn't finish
+     */
+    public UserItem getUserItem() {
+        return mUserItem;
+    }
+
+    public void setUserItem(UserItem userItem){
+        mUserItem = userItem;
+    }
+
+    public void setUserItem() {
+
+        new FlickrUserClient().getUserInfo(mOwnerId, new FlickrUserClient.UserListener() {
+            @Override
+            public void onFailure() {}
+
+            @Override
+            public void onSuccess(UserItem userItem) {
+                mUserItem = userItem;
+
+                if(EventBus.getDefault().hasSubscriberForEvent(PicMessage.class)) {
+                    PicMessage message = new PicMessage(LOAD_SUCCESS);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(USER_EXTRA_KEY, userItem);
+                    message.setBundle(bundle);
+
+                    EventBus.getDefault().post(message);
+                }
+            }
+        });
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -208,6 +252,7 @@ public class PicItem implements Parcelable {
         dest.writeString(mFarm);
         dest.writeString(mServerId);
         dest.writeString(mSecretId);
+        dest.writeParcelable(mUserItem, flags);
     }
 
     public static final Parcelable.Creator<PicItem> CREATOR = new Parcelable.Creator<PicItem>() {
@@ -219,4 +264,28 @@ public class PicItem implements Parcelable {
             return new PicItem[size];
         }
     };
+
+    public static class PicMessage {
+
+        public static int LOAD_SUCCESS = 1;
+
+        private int mMode;
+        private Bundle mBundle;
+
+        public PicMessage(int mode) {
+            mMode = mode;
+        }
+
+        public int getMode() {
+            return mMode;
+        }
+
+        public Bundle getBundle() {
+            return mBundle;
+        }
+
+        public void setBundle(Bundle bundle) {
+            mBundle = bundle;
+        }
+    }
 }

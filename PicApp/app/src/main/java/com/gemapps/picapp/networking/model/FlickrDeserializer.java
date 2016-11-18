@@ -1,4 +1,4 @@
-package com.gemapps.picapp.ui.model;
+package com.gemapps.picapp.networking.model;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;

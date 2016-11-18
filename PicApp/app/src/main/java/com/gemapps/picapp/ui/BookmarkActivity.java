@@ -17,7 +17,6 @@ import com.gemapps.picapp.R;
 import com.gemapps.picapp.data.PicappContract;
 import com.gemapps.picapp.ui.adapters.BookmarkCursorLoader;
 import com.gemapps.picapp.ui.model.PicItem;
-import com.gemapps.picapp.ui.model.UserItem;
 
 import butterknife.BindView;
 
@@ -76,11 +75,10 @@ public class BookmarkActivity extends BaseActivity
     }
 
     @Override
-    public void onClicked(UserItem userItem, PicItem picItem, View imageView) {
+    public void onClicked(PicItem picItem, View imageView) {
         Intent intent = new Intent(this, PhotoItemActivity.class);
 
         intent.putExtra(PhotoItemActivity.PIC_EXTRA_KEY, picItem);
-        intent.putExtra(PhotoItemActivity.USER_EXTRA_KEY, userItem);
 
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(this, imageView, "pic_image");

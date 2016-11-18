@@ -1,12 +1,12 @@
 package com.gemapps.picapp.networking;
 
 import com.gemapps.picapp.BuildConfig;
-import com.gemapps.picapp.ui.model.FlickrDeserializer;
+import com.gemapps.picapp.networking.model.FlickrDeserializer;
 import com.gemapps.picapp.ui.model.PhotoInfoItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import static com.gemapps.picapp.ui.model.FlickrDeserializer.PHOTO_KEY;
+import static com.gemapps.picapp.networking.model.FlickrDeserializer.PHOTO_KEY;
 /**
  * Created by edu on 10/26/16.
  * Flickr api to get info about the photo

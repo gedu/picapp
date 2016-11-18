@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import com.gemapps.picapp.R;
 import com.gemapps.picapp.data.PicSqlHelper;
 import com.gemapps.picapp.data.PicappContract;
-import com.gemapps.picapp.networking.FlickrUserClient;
 import com.gemapps.picapp.networking.FlickrCommentsClient;
 import com.gemapps.picapp.ui.adapters.BaseCommentAdapter;
 import com.gemapps.picapp.ui.adapters.CommentAdapter;
@@ -29,6 +28,10 @@ import com.gemapps.picapp.ui.model.CommentItem;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -54,6 +57,7 @@ public class PhotoItemActivity extends BaseActivity
     private BaseCommentAdapter mCommentAdapter;
 
     private boolean mInBookmark = false;
+    private final EventBus mBus = EventBus.getDefault();
 
     private final Handler mHandler = new Handler();
 
@@ -67,10 +71,6 @@ public class PhotoItemActivity extends BaseActivity
         Bundle bundle = getIntent().getExtras();
         mPicItem = bundle.getParcelable(PIC_EXTRA_KEY);
 
-        if (bundle.containsKey(USER_EXTRA_KEY)) {
-            mUserItem = bundle.getParcelable(USER_EXTRA_KEY);
-        }
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         if (mPicItem.getCommentAmount() > 0) {
@@ -79,12 +79,27 @@ public class PhotoItemActivity extends BaseActivity
             mRecyclerView.setAdapter(getNoCommentsAdapter());
         }
 
-        if (mUserItem == null) loadUserHeaderAsync();
-        else mInBookmark = existInDb();
+        loadUserHeaderAsync();
 
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         Picasso.with(this).load(mPicItem.getPicUrl()).into(mImageView);
+    }
+
+    @Override
+    protected void onPause() {
+
+        unregisterBusEvent();
+        super.onPause();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUserMessageEvent(PicItem.PicMessage picMsg){
+
+        unregisterBusEvent();
+        mUserItem = picMsg.getBundle().getParcelable(USER_EXTRA_KEY);
+        mPicItem.setUserItem(mUserItem);
+        updateUserView();
     }
 
     private void loadComments() {
@@ -109,23 +124,27 @@ public class PhotoItemActivity extends BaseActivity
 
     private void loadUserHeaderAsync() {
 
-        new FlickrUserClient().getUserInfo(mPicItem.getOwnerId(), new FlickrUserClient.UserListener() {
-            @Override
-            public void onFailure() {}
+        if(mPicItem.getUserItem() != null){
+            mUserItem = mPicItem.getUserItem();
+            updateUserView();
+        }else{
+            mBus.register(this);
+        }
+    }
 
-            @Override
-            public void onSuccess(UserItem userItem) {
+    private void updateUserView(){
+        mInBookmark = existInDb();
+        if (mBookmarkItem != null) {
+            mBookmarkItem.setVisible(true);
+            updateBookmarkState();
+        }
 
-                mUserItem = userItem;
-                mInBookmark = existInDb();
-                if (mBookmarkItem != null) {
-                    mBookmarkItem.setVisible(true);
-                    updateBookmarkState();
-                }
+        mCommentAdapter.setUserIcon(mUserItem);
+    }
 
-                mCommentAdapter.setUserIcon(mUserItem);
-            }
-        });
+    private void unregisterBusEvent(){
+
+        if(mBus.isRegistered(this)) mBus.unregister(this);
     }
 
     @Override
@@ -234,6 +253,7 @@ public class PhotoItemActivity extends BaseActivity
     private boolean existInDb() {
         PicSqlHelper helper = new PicSqlHelper(PhotoItemActivity.this);
         SQLiteDatabase readDb = helper.getReadableDatabase();
+
 
         long userId = PicappContract.UserEntry.getUserDbId(readDb, mUserItem);
         long pubId = PicappContract.PublicationEntry.buildPublicationUniqueId(readDb, mPicItem);

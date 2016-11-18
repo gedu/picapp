@@ -86,7 +86,6 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
     @Override
     public void onSuccess(String response) {
 
-
         try {
 
             if (mListener != null) mListener.onSuccess(parse(response));
@@ -109,6 +108,7 @@ public class FlickrPhotosClient extends BaseHttpClient implements BaseHttpClient
         for (int i = 0; i < length; i++) {
 
             PicItem picItem = gson.fromJson(photos.getString(i), PicItem.class);
+            picItem.setUserItem();
             picItems.add(picItem);
         }
         return picItems;
