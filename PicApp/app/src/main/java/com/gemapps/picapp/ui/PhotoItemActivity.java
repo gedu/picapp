@@ -25,6 +25,7 @@ import com.gemapps.picapp.ui.adapters.CommentAdapter;
 import com.gemapps.picapp.ui.adapters.LoadingCommentAdapter;
 import com.gemapps.picapp.ui.adapters.NoCommentAdapter;
 import com.gemapps.picapp.ui.model.CommentItem;
+import com.gemapps.picapp.ui.model.PicBusEvent;
 import com.gemapps.picapp.ui.model.PicItem;
 import com.gemapps.picapp.ui.model.UserItem;
 import com.squareup.picasso.Picasso;
@@ -94,10 +95,10 @@ public class PhotoItemActivity extends BaseActivity
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUserMessageEvent(PicItem.PicMessage picMsg){
+    public void onUserMessageEvent(PicBusEvent picEvent){
 
         unregisterBusEvent();
-        mUserItem = picMsg.getBundle().getParcelable(USER_EXTRA_KEY);
+        mUserItem = picEvent.getBundle().getParcelable(USER_EXTRA_KEY);
         mPicItem.setUserItem(mUserItem);
         updateUserView();
     }

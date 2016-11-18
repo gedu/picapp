@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.gemapps.picapp.ui.PhotoItemActivity.USER_EXTRA_KEY;
-import static com.gemapps.picapp.ui.model.PicItem.PicMessage.LOAD_SUCCESS;
+import static com.gemapps.picapp.ui.model.PicBusEvent.LOAD_SUCCESS;
 
 /**
  * Created by edu on 10/2/16.
@@ -220,8 +220,8 @@ public class PicItem implements Parcelable {
             public void onSuccess(UserItem userItem) {
                 mUserItem = userItem;
 
-                if(EventBus.getDefault().hasSubscriberForEvent(PicMessage.class)) {
-                    PicMessage message = new PicMessage(LOAD_SUCCESS);
+                if(EventBus.getDefault().hasSubscriberForEvent(PicBusEvent.class)) {
+                    PicBusEvent message = new PicBusEvent(LOAD_SUCCESS);
 
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(USER_EXTRA_KEY, userItem);
@@ -264,28 +264,4 @@ public class PicItem implements Parcelable {
             return new PicItem[size];
         }
     };
-
-    public static class PicMessage {
-
-        public static int LOAD_SUCCESS = 1;
-
-        private int mMode;
-        private Bundle mBundle;
-
-        public PicMessage(int mode) {
-            mMode = mode;
-        }
-
-        public int getMode() {
-            return mMode;
-        }
-
-        public Bundle getBundle() {
-            return mBundle;
-        }
-
-        public void setBundle(Bundle bundle) {
-            mBundle = bundle;
-        }
-    }
 }
